@@ -29,8 +29,8 @@
             </a>
 
             <nav class="nav-menu">
-                <% if (adminUser) { %>
-                    <!-- Menú exclusivo para Administradores -->
+                <% if (typeof adminUser !== 'undefined' && adminUser) { %>
+                    <!-- 1. SOLO SE MUESTRA SI ES ADMIN -->
                     <a href="/admin/dashboard" class="nav-link nav-admin"><i data-lucide="layout-dashboard"></i> Panel Admin</a>
                     <a href="/admin/contabilidad" class="nav-link nav-admin"><i data-lucide="calculator"></i> Contabilidad</a>
                     <a href="/admin/cars" class="nav-link nav-admin"><i data-lucide="plus-circle"></i> Catálogo Admin</a>
@@ -38,7 +38,7 @@
                     <a href="/admin/usuarios" class="nav-link nav-admin"><i data-lucide="users"></i> Usuarios</a>
                     <a href="/admin/logout" class="nav-link logout-btn"><i data-lucide="log-out"></i> Salir (<%= adminUser %>)</a>
                 <% } else { %>
-                    <!-- Menú público para Clientes / Visitantes -->
+                    <!-- 2. SOLO SE MUESTRA SI NO ES ADMIN -->
                     <a href="/" class="nav-link"><i data-lucide="home"></i> Inicio</a>
                     <a href="/#wizard-busqueda" class="nav-link"><i data-lucide="search"></i> Búsqueda a la Carta</a>
                     <a href="/#calculadora" class="nav-link"><i data-lucide="calculator"></i> Calculadora</a>
