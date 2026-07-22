@@ -59,17 +59,42 @@ CREATE TABLE IF NOT EXISTS `solicitudes_importacion` (
         ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- 5. Tabla de Gastos por Pedido de Importación
+-- 5. Tabla de Gastos por Pedido de Importación (imputables a un vehículo)
 CREATE TABLE IF NOT EXISTS `gastos_pedido` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `solicitud_id` INT NOT NULL,
     `concepto` VARCHAR(150) NOT NULL,
+    `categoria` VARCHAR(30) NOT NULL DEFAULT 'otros',
     `monto` DECIMAL(12, 2) NOT NULL,
     `creado_en` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT `fk_gastos_solicitud` 
-        FOREIGN KEY (`solicitud_id`) 
-        REFERENCES `solicitudes_importacion` (`id`) 
+    CONSTRAINT `fk_gastos_solicitud`
+        FOREIGN KEY (`solicitud_id`)
+        REFERENCES `solicitudes_importacion` (`id`)
         ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 6. Libro de Gastos Generales (operativos, no imputables a un vehículo concreto)
+CREATE TABLE IF NOT EXISTS `gastos_generales` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `categoria` VARCHAR(30) NOT NULL DEFAULT 'otros',
+    `concepto` VARCHAR(150) NOT NULL,
+    `monto` DECIMAL(12, 2) NOT NULL,
+    `fecha` DATE NOT NULL,
+    `notas` VARCHAR(255) DEFAULT NULL,
+    `creado_por` VARCHAR(50) DEFAULT NULL,
+    `creado_en` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- 7. Libro de Ingresos Generales (señales, cobros y otros no derivados de una venta de catálogo)
+CREATE TABLE IF NOT EXISTS `ingresos_generales` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `tipo` VARCHAR(30) NOT NULL DEFAULT 'otros',
+    `concepto` VARCHAR(150) NOT NULL,
+    `monto` DECIMAL(12, 2) NOT NULL,
+    `fecha` DATE NOT NULL,
+    `notas` VARCHAR(255) DEFAULT NULL,
+    `creado_por` VARCHAR(50) DEFAULT NULL,
+    `creado_en` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- Índices de Optimización de Búsqueda
@@ -79,3 +104,8 @@ CREATE INDEX `idx_coches_estado` ON `coches` (`estado`);
 CREATE INDEX `idx_imagenes_coche` ON `coche_imagenes` (`coche_id`);
 CREATE INDEX `idx_solicitudes_estado` ON `solicitudes_importacion` (`estado`);
 CREATE INDEX `idx_gastos_solicitud` ON `gastos_pedido` (`solicitud_id`);
+CREATE INDEX `idx_gastos_pedido_categoria` ON `gastos_pedido` (`categoria`);
+CREATE INDEX `idx_gastos_generales_fecha` ON `gastos_generales` (`fecha`);
+CREATE INDEX `idx_gastos_generales_categoria` ON `gastos_generales` (`categoria`);
+CREATE INDEX `idx_ingresos_generales_fecha` ON `ingresos_generales` (`fecha`);
+CREATE INDEX `idx_ingresos_generales_tipo` ON `ingresos_generales` (`tipo`);

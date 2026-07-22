@@ -123,15 +123,16 @@ const RequestModel = {
 
     /**
      * Añade un gasto individual a una solicitud/pedido
-     * @param {number} solicitudId 
-     * @param {string} concepto 
-     * @param {number} monto 
+     * @param {number} solicitudId
+     * @param {string} concepto
+     * @param {number} monto
+     * @param {string} [categoria='otros']
      * @returns {Promise<number>}
      */
-    async addExpense(solicitudId, concepto, monto) {
+    async addExpense(solicitudId, concepto, monto, categoria = 'otros') {
         try {
-            const query = 'INSERT INTO gastos_pedido (solicitud_id, concepto, monto) VALUES (?, ?, ?)';
-            const [result] = await db.execute(query, [solicitudId, concepto, parseFloat(monto)]);
+            const query = 'INSERT INTO gastos_pedido (solicitud_id, concepto, categoria, monto) VALUES (?, ?, ?, ?)';
+            const [result] = await db.execute(query, [solicitudId, concepto, categoria, parseFloat(monto)]);
             return result.insertId;
         } catch (err) {
             logger.error('Error en RequestModel.addExpense: ' + err.message, { error: err });

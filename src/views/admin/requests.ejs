@@ -135,7 +135,10 @@
                     <% expenses.forEach(exp => { %>
                         <li>
                             <div class="expense-details">
-                                <span class="expense-concept"><%= exp.concepto %></span>
+                                <span class="expense-concept">
+                                    <%= exp.concepto %>
+                                    <span class="cat-badge cat-<%= exp.categoria || 'otros' %>"><%= categoryLabels[exp.categoria] || 'Otros' %></span>
+                                </span>
                                 <span class="expense-amount"><%= parseFloat(exp.monto).toLocaleString('es-ES') %> €</span>
                             </div>
                             <form action="/admin/requests/<%= request.id %>/expenses/<%= exp.id %>/delete" method="POST" data-confirm="¿Seguro que desea eliminar este gasto?">
@@ -157,9 +160,19 @@
                     <label for="concepto">Concepto del Gasto</label>
                     <input type="text" id="concepto" name="concepto" placeholder="Ej: Compra coche en origen, Grúa, ITV, Matriculación..." required>
                 </div>
-                <div class="form-group">
-                    <label for="monto">Importe (€)</label>
-                    <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="categoria">Categoría</label>
+                        <select id="categoria" name="categoria">
+                            <% categoriasGasto.forEach(cat => { %>
+                                <option value="<%= cat %>" <%= cat === 'otros' ? 'selected' : '' %>><%= categoryLabels[cat] || cat %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto">Importe (€)</label>
+                        <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-outline btn-sm btn-block"><i data-lucide="plus"></i> Añadir Gasto</button>
             </form>

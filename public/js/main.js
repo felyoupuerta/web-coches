@@ -9,6 +9,7 @@
         initMobileMenu();
         initGallery();
         initConfirmForms();
+        initAutoSubmit();
     });
 
     function initIcons() {
@@ -68,6 +69,17 @@
                 if (!window.confirm(form.dataset.confirm)) {
                     event.preventDefault();
                 }
+            });
+        });
+    }
+
+    // Envío automático del formulario al cambiar un control marcado con
+    // data-autosubmit (p. ej. el selector de ejercicio o los filtros),
+    // sin recurrir a onchange inline (CSP estricta).
+    function initAutoSubmit() {
+        document.querySelectorAll('[data-autosubmit]').forEach((control) => {
+            control.addEventListener('change', () => {
+                if (control.form) control.form.submit();
             });
         });
     }

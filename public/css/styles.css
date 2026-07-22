@@ -1374,11 +1374,230 @@ textarea:focus {
     gap: 1rem;
 }
 
+/* --- MÓDULO DE CONTABILIDAD Y GRÁFICOS --- */
+
+/* Utilidades */
+.text-right { text-align: right; }
+.nowrap { white-space: nowrap; }
+.link-plain { color: inherit; }
+.link-plain:hover { color: var(--primary); }
+
+.admin-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Selector de ejercicio y filtros */
+.year-switcher,
+.ledger-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.year-switcher label {
+    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ledger-filter {
+    margin-bottom: 1rem;
+}
+
+.form-select-inline {
+    width: auto;
+    min-width: 120px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+/* KPIs (recuentos) */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kpi-icon i { width: 22px; height: 22px; }
+
+/* Variantes de color de icono (en clases para cumplir la CSP sin estilos inline) */
+.icon-green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.icon-blue { background: rgba(59, 130, 246, 0.1); color: var(--info); }
+.icon-gray { background: rgba(107, 114, 128, 0.12); color: var(--text-light); }
+.icon-gold { background: rgba(245, 158, 11, 0.1); color: var(--primary); }
+.icon-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+.kpi-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kpi-number {
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0.1rem 0 0;
+    color: #ffffff;
+}
+
+.stat-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* Rejilla de gráficos */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+    margin-bottom: 1.25rem;
+}
+
+.chart-card-wide { grid-column: 1 / -1; }
+
+.chart { width: 100%; }
+
+.chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.chart-doughnut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.chart-doughnut { max-width: 240px; }
+
+/* Elementos internos del SVG */
+.chart-gridline { stroke: rgba(255, 255, 255, 0.07); stroke-width: 1; }
+.chart-axis { fill: var(--text-muted); font-size: 11px; font-family: var(--font-body); }
+.chart-point { cursor: pointer; transition: r var(--transition-fast); }
+.chart-point:hover { r: 6; }
+.chart-bar { cursor: pointer; transition: opacity var(--transition-fast); }
+.chart-bar:hover { opacity: 0.82; }
+.chart-seg { cursor: pointer; transition: opacity var(--transition-fast); }
+.chart-seg:hover { opacity: 0.82; }
+.chart-center-num { fill: #ffffff; font-size: 20px; font-weight: 800; font-family: var(--font-headings); }
+.chart-center-label { fill: var(--text-muted); font-size: 12px; font-family: var(--font-body); }
+
+/* Leyenda */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: var(--text-light);
+}
+
+.legend-item i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* Tooltip de gráficos */
+.chart-tooltip {
+    position: absolute;
+    z-index: 999;
+    pointer-events: none;
+    background: rgba(8, 12, 20, 0.95);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    color: #ffffff;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    max-width: 220px;
+}
+
+/* Badge de categoría */
+.cat-badge {
+    display: inline-block;
+    padding: 0.12rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+/* Tabla compacta para los libros */
+.admin-table.compact th,
+.admin-table.compact td {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.88rem;
+}
+
 /* --- RESPONSIVIDAD (MOBILE FIRST ADAPTATION) --- */
 @media (max-width: 900px) {
     .detail-grid,
     .admin-detail-grid {
         grid-template-columns: 1fr;
+    }
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
     
     .footer-grid {

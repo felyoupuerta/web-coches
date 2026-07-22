@@ -1,6 +1,7 @@
 const { body, validationResult } = require('express-validator');
 const RequestModel = require('../models/requestModel');
 const CarModel = require('../models/carModel');
+const AccountingModel = require('../models/accountingModel');
 const logger = require('../config/logger');
 
 const RequestController = {
@@ -116,27 +117,6 @@ const RequestController = {
 
     // --- ACCIONES ADMINISTRATIVAS ---
 
-    // Dashboard General (Resumen de beneficios y listado de solicitudes)
-    async showDashboard(req, res) {
-        try {
-            const stats = await RequestModel.getFinancialSummary();
-            const requests = await RequestModel.getAll();
-            
-            res.render('admin/dashboard', {
-                stats,
-                requests,
-                title: 'Dashboard de Administración y Finanzas',
-                adminUser: req.session.adminUser
-            });
-        } catch (err) {
-            logger.error('Error al cargar dashboard: ' + err.message, { error: err });
-            res.status(500).render('error', {
-                message: 'Error al recuperar métricas del panel.',
-                title: 'Error de Panel'
-            });
-        }
-    },
-
     // Gestión detallada de un pedido y sus gastos
     async showRequestDetails(req, res) {
         try {
@@ -162,6 +142,8 @@ const RequestController = {
                 expenses,
                 totalExpenses,
                 profit,
+                categoriasGasto: AccountingModel.CATEGORIAS_GASTO_VEHICULO,
+                categoryLabels: AccountingModel.CATEGORY_LABELS,
                 title: `Pedido #${request.id} - Gestión`,
                 adminUser: req.session.adminUser
             });
@@ -237,12 +219,16 @@ const RequestController = {
         try {
             const requestId = parseInt(req.params.id, 10);
             const { concepto, monto } = req.body;
+            // Categoría opcional; se valida contra el catálogo o cae en 'otros'
+            const categoria = AccountingModel.CATEGORIAS_GASTO_VEHICULO.includes(req.body.categoria)
+                ? req.body.categoria
+                : 'otros';
 
             if (isNaN(requestId) || !concepto || isNaN(parseFloat(monto))) {
                 return res.status(400).send('Datos de gasto inválidos');
             }
 
-            await RequestModel.addExpense(requestId, concepto.trim(), parseFloat(monto));
+            await RequestModel.addExpense(requestId, concepto.trim(), parseFloat(monto), categoria);
             logger.info(`Administrador '${req.session.adminUser}' añadió gasto '${concepto}' de ${monto}€ al Pedido #${requestId}`);
             res.redirect(`/admin/requests/${requestId}`);
         } catch (err) {

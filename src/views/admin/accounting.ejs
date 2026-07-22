@@ -1,0 +1,303 @@
+<%- include('../partials/header') %>
+
+<% const hoy = new Date().toISOString().slice(0, 10); %>
+
+<div class="back-link-container">
+    <a href="/admin/dashboard" class="back-link"><i data-lucide="arrow-left"></i> Volver al Dashboard</a>
+</div>
+
+<div class="admin-header">
+    <div>
+        <h1>Contabilidad</h1>
+        <p class="text-muted">Libros de ingresos y gastos, rentabilidad por vehículo y balance del ejercicio <%= year %>.</p>
+    </div>
+    <div class="admin-actions">
+        <a href="/admin/contabilidad/export.csv?tipo=ingresos" class="btn btn-outline btn-sm"><i data-lucide="download"></i> Ingresos CSV</a>
+        <a href="/admin/contabilidad/export.csv?tipo=gastos" class="btn btn-outline btn-sm"><i data-lucide="download"></i> Gastos CSV</a>
+    </div>
+</div>
+
+<!-- Selector de ejercicio -->
+<form action="/admin/contabilidad" method="GET" class="year-switcher">
+    <label for="year"><i data-lucide="calendar"></i> Ejercicio</label>
+    <select id="year" name="year" class="form-select-inline" data-autosubmit>
+        <% for (let y = new Date().getFullYear() + 1; y >= 2023; y--) { %>
+            <option value="<%= y %>" <%= y === year ? 'selected' : '' %>><%= y %></option>
+        <% } %>
+    </select>
+    <noscript><button type="submit" class="btn btn-sm btn-outline">Ver</button></noscript>
+</form>
+
+<!-- Balance del ejercicio -->
+<section class="financial-dashboard">
+    <div class="card stat-card">
+        <div class="stat-icon income-icon"><i data-lucide="trending-up"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Ingresos (<%= year %>)</span>
+            <h2 class="stat-number text-success"><%= Math.round(financials.ingresosAnio).toLocaleString('es-ES') %> €</h2>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon expense-icon"><i data-lucide="trending-down"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Gastos (<%= year %>)</span>
+            <h2 class="stat-number text-danger"><%= Math.round(financials.gastosAnio).toLocaleString('es-ES') %> €</h2>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <% const isProfit = financials.beneficioAnio >= 0; %>
+        <div class="stat-icon <%= isProfit ? 'profit-icon' : 'loss-icon' %>">
+            <i data-lucide="<%= isProfit ? 'badge-dollar-sign' : 'alert-circle' %>"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Beneficio Neto (<%= year %>)</span>
+            <h2 class="stat-number <%= isProfit ? 'text-success' : 'text-danger' %>"><%= Math.round(financials.beneficioAnio).toLocaleString('es-ES') %> €</h2>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-icon icon-purple"><i data-lucide="percent"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Margen (<%= year %>)</span>
+            <h2 class="stat-number"><%= financials.margenAnio.toFixed(1) %> %</h2>
+        </div>
+    </div>
+</section>
+
+<!-- Gráficos -->
+<section class="chart-grid">
+    <div class="card chart-card chart-card-wide">
+        <h3><i data-lucide="line-chart"></i> Ingresos vs Gastos por mes (<%= year %>)</h3>
+        <div class="chart" data-chart-type="line" data-chart='<%= JSON.stringify(monthlyChart) %>'></div>
+    </div>
+    <div class="card chart-card">
+        <h3><i data-lucide="pie-chart"></i> Gastos por categoría</h3>
+        <div class="chart" data-chart-type="doughnut" data-chart='<%= JSON.stringify(categoryChart) %>'></div>
+    </div>
+</section>
+
+<!-- Rentabilidad por vehículo -->
+<section class="card">
+    <div class="card-header">
+        <h3><i data-lucide="car"></i> Rentabilidad por Vehículo</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Pedido</th>
+                    <th>Vehículo</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th class="text-right">P. Venta</th>
+                    <th class="text-right">Coste</th>
+                    <th class="text-right">Beneficio</th>
+                    <th class="text-right">Margen</th>
+                    <th class="text-right">ROI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (profitability.length === 0) { %>
+                    <tr><td colspan="9" class="text-center text-muted">No hay vehículos con precio de venta definido.</td></tr>
+                <% } else { %>
+                    <% profitability.forEach(p => { %>
+                        <tr>
+                            <td><a href="/admin/requests/<%= p.id %>" class="link-plain"><strong>#<%= p.id %></strong></a></td>
+                            <td><%= p.vehiculo %></td>
+                            <td><%= p.cliente %></td>
+                            <td><span class="badge badge-<%= p.estado %>"><%= p.estado.toUpperCase() %></span></td>
+                            <td class="text-right"><%= p.precioVenta.toLocaleString('es-ES') %> €</td>
+                            <td class="text-right"><%= p.coste.toLocaleString('es-ES') %> €</td>
+                            <td class="text-right <%= p.beneficio >= 0 ? 'text-success' : 'text-danger' %>"><strong><%= Math.round(p.beneficio).toLocaleString('es-ES') %> €</strong></td>
+                            <td class="text-right"><%= p.margen.toFixed(1) %> %</td>
+                            <td class="text-right"><%= p.roi === null ? '—' : p.roi.toFixed(1) + ' %' %></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="admin-detail-grid">
+    <!-- LIBRO DE INGRESOS -->
+    <div class="admin-col">
+        <div class="card">
+            <div class="card-header">
+                <h3><i data-lucide="arrow-down-circle"></i> Libro de Ingresos</h3>
+            </div>
+
+            <!-- Filtro -->
+            <form action="/admin/contabilidad" method="GET" class="ledger-filter">
+                <input type="hidden" name="year" value="<%= year %>">
+                <select name="tipoIngreso" class="form-select-inline" data-autosubmit>
+                    <option value="">Todos los tipos</option>
+                    <% tiposIngreso.forEach(t => { %>
+                        <option value="<%= t %>" <%= incomeFilters.tipo === t ? 'selected' : '' %>><%= incomeLabels[t] || t %></option>
+                    <% }) %>
+                </select>
+                <noscript><button type="submit" class="btn btn-xs btn-outline">Filtrar</button></noscript>
+            </form>
+
+            <div class="table-responsive">
+                <table class="admin-table compact">
+                    <thead>
+                        <tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th class="text-right">Importe</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <% if (generalIncomes.length === 0) { %>
+                            <tr><td colspan="5" class="text-center text-muted">Sin ingresos registrados.</td></tr>
+                        <% } else { %>
+                            <% generalIncomes.forEach(inc => { %>
+                                <tr>
+                                    <td class="nowrap"><%= new Date(inc.fecha).toLocaleDateString('es-ES') %></td>
+                                    <td><span class="cat-badge"><%= incomeLabels[inc.tipo] || inc.tipo %></span></td>
+                                    <td>
+                                        <%= inc.concepto %>
+                                        <% if (inc.notas) { %><div class="table-subtext"><%= inc.notas %></div><% } %>
+                                    </td>
+                                    <td class="text-right text-success"><strong><%= parseFloat(inc.monto).toLocaleString('es-ES') %> €</strong></td>
+                                    <td class="text-right">
+                                        <form action="/admin/contabilidad/ingresos/<%= inc.id %>/delete" method="POST" class="form-inline-block" data-confirm="¿Eliminar este ingreso?">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" class="delete-expense-btn" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="divider">
+
+            <h4>Registrar Ingreso</h4>
+            <form action="/admin/contabilidad/ingresos" method="POST" class="secure-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" name="tipo" required>
+                            <% tiposIngreso.forEach(t => { %>
+                                <option value="<%= t %>"><%= incomeLabels[t] || t %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_ing">Fecha</label>
+                        <input type="date" id="fecha_ing" name="fecha" value="<%= hoy %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="concepto_ing">Concepto</label>
+                    <input type="text" id="concepto_ing" name="concepto" placeholder="Ej: Señal reserva BMW M3" maxlength="150" required>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="monto_ing">Importe (€)</label>
+                        <input type="number" id="monto_ing" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notas_ing">Notas (opcional)</label>
+                        <input type="text" id="notas_ing" name="notas" maxlength="255" placeholder="Referencia, cliente...">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm btn-block"><i data-lucide="plus"></i> Añadir Ingreso</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LIBRO DE GASTOS -->
+    <div class="admin-col">
+        <div class="card">
+            <div class="card-header">
+                <h3><i data-lucide="arrow-up-circle"></i> Libro de Gastos Generales</h3>
+            </div>
+
+            <!-- Filtros -->
+            <form action="/admin/contabilidad" method="GET" class="ledger-filter">
+                <input type="hidden" name="year" value="<%= year %>">
+                <select name="catGasto" class="form-select-inline" data-autosubmit>
+                    <option value="">Todas las categorías</option>
+                    <% categoriasGasto.forEach(c => { %>
+                        <option value="<%= c %>" <%= expenseFilters.categoria === c ? 'selected' : '' %>><%= categoryLabels[c] || c %></option>
+                    <% }) %>
+                </select>
+                <input type="date" name="desde" value="<%= expenseFilters.desde || '' %>" class="form-select-inline" title="Desde" data-autosubmit>
+                <input type="date" name="hasta" value="<%= expenseFilters.hasta || '' %>" class="form-select-inline" title="Hasta" data-autosubmit>
+                <noscript><button type="submit" class="btn btn-xs btn-outline">Filtrar</button></noscript>
+            </form>
+
+            <div class="table-responsive">
+                <table class="admin-table compact">
+                    <thead>
+                        <tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th class="text-right">Importe</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <% if (generalExpenses.length === 0) { %>
+                            <tr><td colspan="5" class="text-center text-muted">Sin gastos registrados.</td></tr>
+                        <% } else { %>
+                            <% generalExpenses.forEach(exp => { %>
+                                <tr>
+                                    <td class="nowrap"><%= new Date(exp.fecha).toLocaleDateString('es-ES') %></td>
+                                    <td><span class="cat-badge"><%= categoryLabels[exp.categoria] || exp.categoria %></span></td>
+                                    <td>
+                                        <%= exp.concepto %>
+                                        <% if (exp.notas) { %><div class="table-subtext"><%= exp.notas %></div><% } %>
+                                    </td>
+                                    <td class="text-right text-danger"><strong><%= parseFloat(exp.monto).toLocaleString('es-ES') %> €</strong></td>
+                                    <td class="text-right">
+                                        <form action="/admin/contabilidad/gastos/<%= exp.id %>/delete" method="POST" class="form-inline-block" data-confirm="¿Eliminar este gasto?">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" class="delete-expense-btn" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="divider">
+
+            <h4>Registrar Gasto General</h4>
+            <form action="/admin/contabilidad/gastos" method="POST" class="secure-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="categoria_gas">Categoría</label>
+                        <select id="categoria_gas" name="categoria" required>
+                            <% categoriasGasto.forEach(c => { %>
+                                <option value="<%= c %>" <%= c === 'otros' ? 'selected' : '' %>><%= categoryLabels[c] || c %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_gas">Fecha</label>
+                        <input type="date" id="fecha_gas" name="fecha" value="<%= hoy %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="concepto_gas">Concepto</label>
+                    <input type="text" id="concepto_gas" name="concepto" placeholder="Ej: Alquiler nave septiembre" maxlength="150" required>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="monto_gas">Importe (€)</label>
+                        <input type="number" id="monto_gas" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notas_gas">Notas (opcional)</label>
+                        <input type="text" id="notas_gas" name="notas" maxlength="255" placeholder="Proveedor, factura...">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm btn-block"><i data-lucide="plus"></i> Añadir Gasto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/js/charts.js" defer></script>
+
+<%- include('../partials/footer') %>

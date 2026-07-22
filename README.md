@@ -128,6 +128,13 @@ SESSION_SECRET=un_secreto_largo_y_aleatorio_generado_con_openssl_rand_hex_32
 ```
 > **Importante:** en `NODE_ENV=production` la aplicación se niega a arrancar si `SESSION_SECRET` no está definido (evita el uso accidental de un secreto por defecto embebido en el código). Genera uno real con `openssl rand -hex 32`.
 
+### Aplicar Migraciones de Base de Datos
+Sobre una base de datos ya existente (por ejemplo, al actualizar una instalación anterior), aplique las migraciones pendientes. El runner es idempotente y registra cada migración aplicada en la tabla `_migraciones`, por lo que puede ejecutarse con seguridad tantas veces como haga falta:
+```bash
+npm run migrate
+```
+> En instalaciones nuevas cargadas con `db/schema.sql` no es necesario: el esquema ya incluye las tablas del módulo de contabilidad (`gastos_generales`, `ingresos_generales`) y la columna `categoria` de `gastos_pedido`.
+
 ### Crear el Usuario Administrador Inicial
 Ejecute el script de sembrado para crear las credenciales seguras de acceso al panel de control:
 ```bash

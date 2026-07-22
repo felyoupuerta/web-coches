@@ -27,6 +27,7 @@ const crypto = require('crypto');
 const CarController = require('./controllers/carController');
 const RequestController = require('./controllers/requestController');
 const AuthController = require('./controllers/authController');
+const AccountingController = require('./controllers/accountingController');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
@@ -194,7 +195,15 @@ app.post('/admin/login', loginLimiter, csrfCheck, AuthController.login);
 app.get('/admin/logout', AuthController.logout);
 
 // Rutas de Panel de Administración Protegidas
-app.get('/admin/dashboard', AuthController.requireAdmin, RequestController.showDashboard);
+app.get('/admin/dashboard', AuthController.requireAdmin, AccountingController.showDashboard);
+
+// Rutas del Módulo de Contabilidad
+app.get('/admin/contabilidad', AuthController.requireAdmin, AccountingController.showAccounting);
+app.get('/admin/contabilidad/export.csv', AuthController.requireAdmin, AccountingController.exportLedger);
+app.post('/admin/contabilidad/gastos', AuthController.requireAdmin, csrfCheck, AccountingController.addGeneralExpense);
+app.post('/admin/contabilidad/gastos/:id/delete', AuthController.requireAdmin, csrfCheck, AccountingController.deleteGeneralExpense);
+app.post('/admin/contabilidad/ingresos', AuthController.requireAdmin, csrfCheck, AccountingController.addGeneralIncome);
+app.post('/admin/contabilidad/ingresos/:id/delete', AuthController.requireAdmin, csrfCheck, AccountingController.deleteGeneralIncome);
 
 // Rutas de Gestión Financiera y Estados de Pedidos
 app.get('/admin/requests/:id', AuthController.requireAdmin, RequestController.showRequestDetails);

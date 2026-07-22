@@ -3,42 +3,114 @@
 <div class="admin-header">
     <div>
         <h1>Panel de Administración</h1>
-        <p class="text-muted">Gestión de importaciones alemanas y balance financiero consolidado.</p>
+        <p class="text-muted">Resumen operativo y balance financiero consolidado · Ejercicio <%= year %></p>
     </div>
     <div class="admin-actions">
-        <a href="/admin/cars" class="btn btn-outline"><i data-lucide="car"></i> Gestionar Catálogo</a>
+        <a href="/admin/contabilidad" class="btn btn-outline"><i data-lucide="calculator"></i> Contabilidad</a>
+        <a href="/admin/cars" class="btn btn-outline"><i data-lucide="car"></i> Catálogo</a>
     </div>
 </div>
 
-<!-- Cuadrícula Financiera General -->
+<!-- Selector de ejercicio -->
+<form action="/admin/dashboard" method="GET" class="year-switcher">
+    <label for="year"><i data-lucide="calendar"></i> Ejercicio</label>
+    <select id="year" name="year" class="form-select-inline" data-autosubmit>
+        <% for (let y = new Date().getFullYear() + 1; y >= 2023; y--) { %>
+            <option value="<%= y %>" <%= y === year ? 'selected' : '' %>><%= y %></option>
+        <% } %>
+    </select>
+    <noscript><button type="submit" class="btn btn-sm btn-outline">Ver</button></noscript>
+</form>
+
+<!-- KPIs operativos: recuento de vehículos y solicitudes -->
+<section class="kpi-grid">
+    <div class="card kpi-card">
+        <div class="kpi-icon icon-green"><i data-lucide="check-circle"></i></div>
+        <div class="kpi-info">
+            <span class="kpi-label">Disponibles</span>
+            <h2 class="kpi-number"><%= counts.disponibles %></h2>
+        </div>
+    </div>
+    <div class="card kpi-card">
+        <div class="kpi-icon icon-blue"><i data-lucide="bookmark"></i></div>
+        <div class="kpi-info">
+            <span class="kpi-label">Reservados</span>
+            <h2 class="kpi-number"><%= counts.reservados %></h2>
+        </div>
+    </div>
+    <div class="card kpi-card">
+        <div class="kpi-icon icon-gray"><i data-lucide="badge-check"></i></div>
+        <div class="kpi-info">
+            <span class="kpi-label">Vendidos</span>
+            <h2 class="kpi-number"><%= counts.vendidos %></h2>
+        </div>
+    </div>
+    <div class="card kpi-card">
+        <div class="kpi-icon icon-gold"><i data-lucide="inbox"></i></div>
+        <div class="kpi-info">
+            <span class="kpi-label">Solicitudes pendientes</span>
+            <h2 class="kpi-number"><%= counts.solicitudes_pendientes %></h2>
+        </div>
+    </div>
+</section>
+
+<!-- KPIs financieros del ejercicio -->
 <section class="financial-dashboard">
     <div class="card stat-card">
         <div class="stat-icon income-icon"><i data-lucide="trending-up"></i></div>
         <div class="stat-info">
-            <span class="stat-label">Ingresos Totales (Ventas)</span>
-            <h2 class="stat-number text-success"><%= stats.ingresos.toLocaleString('es-ES') %> €</h2>
-        </div>
-    </div>
-    
-    <div class="card stat-card">
-        <div class="stat-icon expense-icon"><i data-lucide="trending-down"></i></div>
-        <div class="stat-info">
-            <span class="stat-label">Gastos Totales de Compra/Importación</span>
-            <h2 class="stat-number text-danger"><%= stats.gastos.toLocaleString('es-ES') %> €</h2>
+            <span class="stat-label">Ingresos (<%= year %>)</span>
+            <h2 class="stat-number text-success"><%= Math.round(financials.ingresosAnio).toLocaleString('es-ES') %> €</h2>
+            <span class="stat-sub">Este mes: <%= Math.round(financials.ingresosMes).toLocaleString('es-ES') %> €</span>
         </div>
     </div>
 
     <div class="card stat-card">
-        <% const isProfit = stats.beneficioNeto >= 0; %>
+        <div class="stat-icon expense-icon"><i data-lucide="trending-down"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Gastos (<%= year %>)</span>
+            <h2 class="stat-number text-danger"><%= Math.round(financials.gastosAnio).toLocaleString('es-ES') %> €</h2>
+            <span class="stat-sub">Este mes: <%= Math.round(financials.gastosMes).toLocaleString('es-ES') %> €</span>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <% const isProfit = financials.beneficioAnio >= 0; %>
         <div class="stat-icon <%= isProfit ? 'profit-icon' : 'loss-icon' %>">
             <i data-lucide="<%= isProfit ? 'badge-dollar-sign' : 'alert-circle' %>"></i>
         </div>
         <div class="stat-info">
-            <span class="stat-label">Beneficio Neto Acumulado</span>
+            <span class="stat-label">Beneficio Neto (<%= year %>)</span>
             <h2 class="stat-number <%= isProfit ? 'text-success' : 'text-danger' %>">
-                <%= stats.beneficioNeto.toLocaleString('es-ES') %> €
+                <%= Math.round(financials.beneficioAnio).toLocaleString('es-ES') %> €
             </h2>
+            <span class="stat-sub">Este mes: <%= Math.round(financials.beneficioMes).toLocaleString('es-ES') %> €</span>
         </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon icon-purple"><i data-lucide="percent"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Margen (<%= year %>)</span>
+            <h2 class="stat-number"><%= financials.margenAnio.toFixed(1) %> %</h2>
+            <span class="stat-sub">Sobre ingresos del ejercicio</span>
+        </div>
+    </div>
+</section>
+
+<!-- Gráficos -->
+<section class="chart-grid">
+    <div class="card chart-card chart-card-wide">
+        <h3><i data-lucide="line-chart"></i> Ingresos vs Gastos por mes (<%= year %>)</h3>
+        <div class="chart" data-chart-type="line" data-chart='<%= JSON.stringify(monthlyChart) %>'></div>
+    </div>
+    <div class="card chart-card">
+        <h3><i data-lucide="pie-chart"></i> Gastos por categoría</h3>
+        <div class="chart" data-chart-type="doughnut" data-chart='<%= JSON.stringify(categoryChart) %>'></div>
+    </div>
+    <div class="card chart-card">
+        <h3><i data-lucide="car"></i> Estado del inventario</h3>
+        <div class="chart" data-chart-type="doughnut" data-chart='<%= JSON.stringify(statusChart) %>'></div>
     </div>
 </section>
 
@@ -47,7 +119,7 @@
     <div class="card-header">
         <h3><i data-lucide="list"></i> Solicitudes de Importación y Pedidos</h3>
     </div>
-    
+
     <div class="table-responsive">
         <table class="admin-table">
             <thead>
@@ -115,5 +187,7 @@
         </table>
     </div>
 </section>
+
+<script src="/js/charts.js" defer></script>
 
 <%- include('../partials/footer') %>
