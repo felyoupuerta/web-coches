@@ -1,0 +1,119 @@
+<%- include('../partials/header') %>
+
+<div class="admin-header">
+    <div>
+        <h1>Panel de Administración</h1>
+        <p class="text-muted">Gestión de importaciones alemanas y balance financiero consolidado.</p>
+    </div>
+    <div class="admin-actions">
+        <a href="/admin/cars" class="btn btn-outline"><i data-lucide="car"></i> Gestionar Catálogo</a>
+    </div>
+</div>
+
+<!-- Cuadrícula Financiera General -->
+<section class="financial-dashboard">
+    <div class="card stat-card">
+        <div class="stat-icon income-icon"><i data-lucide="trending-up"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Ingresos Totales (Ventas)</span>
+            <h2 class="stat-number text-success"><%= stats.ingresos.toLocaleString('es-ES') %> €</h2>
+        </div>
+    </div>
+    
+    <div class="card stat-card">
+        <div class="stat-icon expense-icon"><i data-lucide="trending-down"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Gastos Totales de Compra/Importación</span>
+            <h2 class="stat-number text-danger"><%= stats.gastos.toLocaleString('es-ES') %> €</h2>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <% const isProfit = stats.beneficioNeto >= 0; %>
+        <div class="stat-icon <%= isProfit ? 'profit-icon' : 'loss-icon' %>">
+            <i data-lucide="<%= isProfit ? 'badge-dollar-sign' : 'alert-circle' %>"></i>
+        </div>
+        <div class="stat-info">
+            <span class="stat-label">Beneficio Neto Acumulado</span>
+            <h2 class="stat-number <%= isProfit ? 'text-success' : 'text-danger' %>">
+                <%= stats.beneficioNeto.toLocaleString('es-ES') %> €
+            </h2>
+        </div>
+    </div>
+</section>
+
+<!-- Listado de Solicitudes y Negocios -->
+<section class="requests-section card">
+    <div class="card-header">
+        <h3><i data-lucide="list"></i> Solicitudes de Importación y Pedidos</h3>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Coche Interesado</th>
+                    <th>Estado</th>
+                    <th>Precio Venta</th>
+                    <th>Gastos</th>
+                    <th>Beneficio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (requests.length === 0) { %>
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">No se han recibido solicitudes todavía.</td>
+                    </tr>
+                <% } else { %>
+                    <% requests.forEach(req => { %>
+                        <tr>
+                            <td><strong>#<%= req.id %></strong></td>
+                            <td>
+                                <div><strong><%= req.nombre_cliente %></strong></div>
+                                <div class="table-subtext"><%= req.email_cliente %> | Tel: <%= req.telefono_cliente %></div>
+                            </td>
+                            <td>
+                                <% if (req.coche_id) { %>
+                                    <%= req.marca %> <%= req.modelo %>
+                                    <div class="table-subtext">Catálogo: <%= parseFloat(req.precio_catalogo).toLocaleString('es-ES') %> €</div>
+                                <% } else { %>
+                                    <span class="badge badge-gray">A la carta</span>
+                                    <% if (req.mensaje) { %>
+                                        <div class="table-subtext"><%= req.mensaje.substring(0, 30) %>...</div>
+                                    <% } %>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="badge badge-<%= req.estado %>"><%= req.estado.toUpperCase() %></span>
+                            </td>
+                            <td>
+                                <%= req.precio_venta ? parseFloat(req.precio_venta).toLocaleString('es-ES') + ' €' : '-' %>
+                            </td>
+                            <td>
+                                <%= parseFloat(req.total_gastos).toLocaleString('es-ES') %> €
+                            </td>
+                            <td>
+                                <% if (req.precio_venta) { %>
+                                    <% const margin = parseFloat(req.precio_venta) - parseFloat(req.total_gastos); %>
+                                    <span class="<%= margin >= 0 ? 'text-success' : 'text-danger' %>">
+                                        <%= margin.toLocaleString('es-ES') %> €
+                                    </span>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                            <td>
+                                <a href="/admin/requests/<%= req.id %>" class="btn btn-outline btn-xs"><i data-lucide="settings"></i> Gestionar</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

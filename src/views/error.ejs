@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+
+<div class="error-container card text-center">
+    <div class="error-icon">
+        <i data-lucide="alert-triangle"></i>
+    </div>
+    <h1 class="error-title">Ha ocurrido un problema</h1>
+    <p class="error-message">
+        <%= message || 'La acción solicitada no pudo completarse. Por favor, inténtelo de nuevo más tarde.' %>
+    </p>
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary"><i data-lucide="arrow-left"></i> Volver al Catálogo</a>
+        <a href="/importar" class="btn btn-outline"><i data-lucide="mail"></i> Contactar Soporte</a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

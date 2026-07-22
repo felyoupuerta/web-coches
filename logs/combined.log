@@ -1,0 +1,31 @@
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-20 17:31:10"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:31:10"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:31:27"}
+{"level":"warn","message":"Intento de violación CSRF detectado desde IP: 192.168.1.110","timestamp":"2026-07-20 17:31:51"}
+{"level":"warn","message":"Intento de violación CSRF detectado desde IP: 192.168.1.110","timestamp":"2026-07-20 17:33:25"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-20 17:43:44"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:43:44"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-20 17:46:08"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:46:08"}
+{"level":"warn","message":"Intento de violación CSRF detectado desde IP: 192.168.1.110","timestamp":"2026-07-20 17:46:17"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: development)","timestamp":"2026-07-20 17:48:09"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:48:09"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-20 17:48:31"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-20 17:55:19"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 17:55:19"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 18:06:45"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-20 18:07:06"}
+{"level":"info","message":"Administrador 'admin' inició sesión exitosamente.","timestamp":"2026-07-20 18:07:21"}
+{"level":"info","message":"Administrador 'admin' eliminó usuario admin ID: 1","timestamp":"2026-07-20 18:07:47"}
+{"level":"info","message":"Administrador 'admin' creó nuevo usuario admin: 'manu'","timestamp":"2026-07-20 18:08:15"}
+{"level":"info","message":"Administrador 'manu' inició sesión exitosamente.","timestamp":"2026-07-20 18:09:07"}
+{"level":"info","message":"Administrador 'admin' cerró sesión.","timestamp":"2026-07-20 18:09:50"}
+{"level":"info","message":"Administrador 'manu' registró un coche: bmw m3 ","timestamp":"2026-07-20 18:12:09"}
+{"level":"info","message":"Nueva solicitud de importación recibida de Felipe Angeriz (felipe@gmail.com)","timestamp":"2026-07-20 18:12:54"}
+{"level":"info","message":"Administrador 'manu' actualizó precio de venta del Pedido #1 a 500000€","timestamp":"2026-07-20 18:13:33"}
+{"level":"info","message":"Administrador 'manu' añadió gasto 'transporte' de 450€ al Pedido #1","timestamp":"2026-07-20 18:14:01"}
+{"level":"info","message":"Nueva solicitud de importación recibida de Felipe Angeriz (sedrgfgsdgdrf@gmail.com)","timestamp":"2026-07-20 18:15:40"}
+{"level":"info","message":"Administrador 'manu' actualizó precio de venta del Pedido #2 a 500000€","timestamp":"2026-07-20 18:26:14"}
+{"level":"info","message":"Administrador 'manu' añadió gasto 'grúa' de 600€ al Pedido #2","timestamp":"2026-07-20 18:26:40"}
+{"level":"info","message":"Administrador 'manu' cambió estado de Pedido #2 a 'pendiente'","timestamp":"2026-07-20 18:27:02"}
+{"level":"info","message":"Administrador 'manu' cerró sesión.","timestamp":"2026-07-20 18:28:03"}

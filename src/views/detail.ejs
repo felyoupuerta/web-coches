@@ -1,0 +1,104 @@
+<%- include('partials/header') %>
+
+<div class="back-link-container">
+    <a href="/" class="back-link"><i data-lucide="arrow-left"></i> Volver al Catálogo</a>
+</div>
+
+<div class="detail-grid">
+    <!-- Galería de imágenes (Soporte Múltiple) -->
+    <div class="gallery-container card">
+        <div class="main-image-wrapper">
+            <% if (images.length > 0) { %>
+                <img id="main-gallery-img" src="<%= images[0].ruta_imagen %>" alt="<%= car.marca %> <%= car.modelo %>">
+            <% } else { %>
+                <div class="image-placeholder">
+                    <i data-lucide="image" size="64"></i>
+                    <span>Sin imágenes disponibles</span>
+                </div>
+            <% } %>
+        </div>
+        
+        <% if (images.length > 1) { %>
+            <div class="thumbnails-grid">
+                <% images.forEach((img, index) => { %>
+                    <div class="thumbnail <%= index === 0 ? 'active' : '' %>" onclick="switchImage('<%= img.ruta_imagen %>', this)">
+                        <img src="<%= img.ruta_imagen %>" alt="Vista <%= index + 1 %>">
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Ficha técnica y CTA -->
+    <div class="info-container">
+        <div class="detail-header card">
+            <span class="badge badge-<%= car.estado %>"><%= car.estado.toUpperCase() %></span>
+            <h1><%= car.marca %> <span class="text-light"><%= car.modelo %></span></h1>
+            <p class="detail-subtitle">Año <%= car.ano %> &bull; <%= car.kilometros.toLocaleString() %> km</p>
+            <div class="price-tag"><%= parseFloat(car.precio).toLocaleString('es-ES') %> €</div>
+        </div>
+
+        <div class="specs-card card">
+            <h3>Especificaciones Técnicas</h3>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="tag"></i> Marca</span>
+                    <span class="spec-value"><%= car.marca %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="hash"></i> Modelo</span>
+                    <span class="spec-value"><%= car.modelo %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="calendar"></i> Año</span>
+                    <span class="spec-value"><%= car.ano %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="milestone"></i> Kilómetros</span>
+                    <span class="spec-value"><%= car.kilometros.toLocaleString() %> km</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="gauge"></i> Motor</span>
+                    <span class="spec-value"><%= car.motor || 'N/D' %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="zap"></i> Potencia</span>
+                    <span class="spec-value"><%= car.potencia || 'N/D' %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="fuel"></i> Combustible</span>
+                    <span class="spec-value"><%= car.combustible || 'N/D' %></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label"><i data-lucide="cog"></i> Transmisión</span>
+                    <span class="spec-value"><%= car.transmision || 'N/D' %></span>
+                </div>
+            </div>
+        </div>
+
+        <% if (car.descripcion) { %>
+            <div class="description-card card">
+                <h3>Descripción</h3>
+                <p><%= car.descripcion %></p>
+            </div>
+        <% } %>
+
+        <div class="cta-card card text-center">
+            <h3>¿Te interesa este vehículo?</h3>
+            <p>Solicita presupuesto de importación llave en mano. Nos encargamos del transporte terrestre certificado, tasas de importación, homologación e ITV.</p>
+            <a href="/importar?coche_id=<%= car.id %>" class="btn btn-primary btn-lg btn-block"><i data-lucide="send"></i> Solicitar Presupuesto Seguro</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchImage(src, thumbnailEl) {
+        document.getElementById('main-gallery-img').src = src;
+        // Quitar clase activa de todos
+        document.querySelectorAll('.thumbnail').forEach(el => el.classList.remove('active'));
+        // Añadir a este
+        thumbnailEl.classList.add('active');
+    }
+</script>
+
+<%- include('partials/footer') %>

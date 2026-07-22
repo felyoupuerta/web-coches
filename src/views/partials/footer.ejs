@@ -1,0 +1,55 @@
+    </main>
+
+    <footer class="app-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <span class="logo-accent">DEUTSCH</span><span class="logo-main">IMPORT</span>
+                </a>
+                <p>Importación segura, rápida y profesional de vehículos desde Alemania directamente a España. Nos encargamos de todo el proceso de homologación, transporte y matriculación.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="/"><i data-lucide="chevron-right"></i> Catálogo de Coches</a></li>
+                    <li><a href="/importar"><i data-lucide="chevron-right"></i> Pedir coche a la carta</a></li>
+                    <li><a href="/admin/login"><i data-lucide="chevron-right"></i> Acceso Personal</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-contact">
+                <h4>Contacto y Ubicación</h4>
+                <p><i data-lucide="phone"></i> +34 900 123 456</p>
+                <p><i data-lucide="mail"></i> info@deutschimport.es</p>
+                <p><i data-lucide="map-pin"></i> Madrid / Stuttgart</p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; <%= new Date().getFullYear() %> DeutschImport. Todos los derechos reservados. Seguridad perimetral y segmentación Proxmox LXC certificada.</p>
+        </div>
+    </footer>
+
+    <!-- Script de inicialización de iconos Lucide -->
+    <script>
+        lucide.createIcons();
+
+        // Script para menú responsive móvil
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.setAttribute('data-lucide', 'x');
+                } else {
+                    icon.setAttribute('data-lucide', 'menu');
+                }
+                lucide.createIcons();
+            });
+        }
+    </script>
+</body>
+</html>

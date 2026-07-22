@@ -1,0 +1,29 @@
+{
+  "name": "web-coches-alemania",
+  "version": "1.0.0",
+  "description": "Aplicación web segura para portal de importación de coches desde Alemania",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "seed-admin": "node scripts/create-admin.js"
+  },
+  "keywords": [
+    "express",
+    "mariadb",
+    "security",
+    "car-import"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.1.0",
+    "helmet": "^7.1.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.1",
+    "winston": "^3.13.0"
+  }
+}

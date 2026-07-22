@@ -1,0 +1,102 @@
+<%- include('partials/header') %>
+
+<section class="hero-section text-center">
+    <h1>Encuentra tu próximo coche de Alemania</h1>
+    <p>Explora vehículos seleccionados y listos para importar. Gestionamos todo el transporte, ITV e matriculación.</p>
+</section>
+
+<!-- Panel de Filtros -->
+<section class="filters-card card">
+    <form action="/" method="GET" class="filters-form">
+        <div class="form-group-grid">
+            <div class="form-group">
+                <label for="marca"><i data-lucide="tag"></i> Marca</label>
+                <input type="text" id="marca" name="marca" placeholder="Ej: Audi, BMW..." value="<%= filters.marca || '' %>">
+            </div>
+            
+            <div class="form-group">
+                <label for="modelo"><i data-lucide="hash"></i> Modelo</label>
+                <input type="text" id="modelo" name="modelo" placeholder="Ej: A4, M3..." value="<%= filters.modelo || '' %>">
+            </div>
+
+            <div class="form-group">
+                <label for="combustible"><i data-lucide="fuel"></i> Combustible</label>
+                <select id="combustible" name="combustible">
+                    <option value="">Cualquier motorización</option>
+                    <option value="Gasolina" <%= filters.combustible === 'Gasolina' ? 'selected' : '' %>>Gasolina</option>
+                    <option value="Diésel" <%= filters.combustible === 'Diésel' ? 'selected' : '' %>>Diésel</option>
+                    <option value="Híbrido" <%= filters.combustible === 'Híbrido' ? 'selected' : '' %>>Híbrido</option>
+                    <option value="Eléctrico" <%= filters.combustible === 'Eléctrico' ? 'selected' : '' %>>Eléctrico</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="minPrecio"><i data-lucide="arrow-down-right"></i> Precio Mín</label>
+                <input type="number" id="minPrecio" name="minPrecio" placeholder="0 €" value="<%= filters.minPrecio || '' %>">
+            </div>
+
+            <div class="form-group">
+                <label for="maxPrecio"><i data-lucide="arrow-up-right"></i> Precio Máx</label>
+                <input type="number" id="maxPrecio" name="maxPrecio" placeholder="150000 €" value="<%= filters.maxPrecio || '' %>">
+            </div>
+        </div>
+        
+        <div class="filters-actions">
+            <button type="submit" class="btn btn-primary"><i data-lucide="sliders-horizontal"></i> Filtrar Catálogo</button>
+            <a href="/" class="btn btn-outline"><i data-lucide="rotate-ccw"></i> Limpiar</a>
+        </div>
+    </form>
+</section>
+
+<!-- Catálogo Grid -->
+<section class="catalog-section">
+    <% if (cars.length === 0) { %>
+        <div class="no-results card text-center">
+            <i data-lucide="alert-circle" size="48"></i>
+            <h3>No se encontraron coches</h3>
+            <p>Prueba a ajustar los criterios de búsqueda o solicita un coche a la carta en el formulario de importación.</p>
+            <a href="/importar" class="btn btn-primary">Pedir Coche a la Carta</a>
+        </div>
+    <% } else { %>
+        <div class="cars-grid">
+            <% cars.forEach(car => { %>
+                <article class="car-card card">
+                    <div class="car-card-image">
+                        <% if (car.imagen_principal) { %>
+                            <img src="<%= car.imagen_principal %>" alt="<%= car.marca %> <%= car.modelo %>">
+                        <% } else { %>
+                            <div class="image-placeholder">
+                                <i data-lucide="image"></i>
+                                <span>Sin Imagen</span>
+                            </div>
+                        <% } %>
+                        <span class="badge badge-<%= car.estado %>"><%= car.estado.toUpperCase() %></span>
+                    </div>
+                    
+                    <div class="car-card-body">
+                        <div class="car-card-header">
+                            <h3><%= car.marca %> <span class="text-light"><%= car.modelo %></span></h3>
+                            <span class="car-year"><%= car.ano %></span>
+                        </div>
+                        
+                        <div class="car-specs-summary">
+                            <span><i data-lucide="milestone"></i> <%= car.kilometros.toLocaleString() %> km</span>
+                            <span><i data-lucide="fuel"></i> <%= car.combustible || 'N/D' %></span>
+                            <span><i data-lucide="cog"></i> <%= car.transmision || 'N/D' %></span>
+                        </div>
+                        
+                        <div class="car-card-footer">
+                            <span class="car-price"><%= parseFloat(car.precio).toLocaleString('es-ES') %> €</span>
+                            <div class="car-actions">
+                                <a href="/coches/<%= car.id %>" class="btn btn-outline btn-sm">Ficha</a>
+                                <a href="/importar?coche_id=<%= car.id %>" class="btn btn-primary btn-sm">Solicitar</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    <% } %>
+</section>
+
+<%- include('partials/footer') %>

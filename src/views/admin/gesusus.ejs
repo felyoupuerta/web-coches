@@ -1,0 +1,92 @@
+<%- include('../partials/header') %>
+
+<div class="back-link-container">
+    <a href="/admin/dashboard" class="back-link"><i data-lucide="arrow-left"></i> Volver al Dashboard</a>
+</div>
+
+<div class="admin-header">
+    <h1>Gestionar Usuarios Administradores</h1>
+    <p class="text-muted">Crea o elimina cuentas de acceso al panel de administración.</p>
+</div>
+
+<div class="admin-detail-grid">
+    <!-- Columna Izquierda: Listado de usuarios -->
+    <div class="admin-col">
+        <div class="card">
+            <h3><i data-lucide="users"></i> Usuarios Registrados</h3>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Fecha de Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (usuarios.length === 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td>
+                            </tr>
+                        <% } else { %>
+                            <% usuarios.forEach(usuario => { %>
+                                <tr>
+                                    <td><strong>#<%= usuario.id %></strong></td>
+                                    <td>
+                                        <strong><%= usuario.usuario %></strong>
+                                        <% if (usuario.usuario === adminUser) { %>
+                                            <span class="badge badge-aprobado">TÚ</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(usuario.creado_en).toLocaleString('es-ES') %></td>
+                                    <td>
+                                        <% if (usuario.usuario === adminUser) { %>
+                                            <span class="text-muted">—</span>
+                                        <% } else { %>
+                                            <form action="/admin/usuarios/<%= usuario.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea eliminar al usuario «<%= usuario.usuario %>»? Esta acción es irreversible.');" style="display:inline;">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <button type="submit" class="btn btn-danger btn-xs"><i data-lucide="trash"></i> Eliminar</button>
+                                            </form>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Formulario para crear nuevo usuario -->
+    <div class="admin-col">
+        <div class="card">
+            <h3><i data-lucide="user-plus"></i> Crear Nuevo Administrador</h3>
+
+            <form action="/admin/usuarios" method="POST" class="secure-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                <div class="form-group">
+                    <label for="usuario">Nombre de Usuario</label>
+                    <input type="text" id="usuario" name="usuario" placeholder="Ej: admin2" required autocomplete="off" minlength="3" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirm">Confirmar Contraseña</label>
+                    <input type="password" id="password_confirm" name="password_confirm" placeholder="Repite la contraseña" required minlength="8">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block"><i data-lucide="user-plus"></i> Crear Administrador</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

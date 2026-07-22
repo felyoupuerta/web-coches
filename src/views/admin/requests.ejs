@@ -1,0 +1,170 @@
+<%- include('../partials/header') %>
+
+<div class="back-link-container">
+    <a href="/admin/dashboard" class="back-link"><i data-lucide="arrow-left"></i> Volver al Dashboard</a>
+</div>
+
+<div class="admin-request-title">
+    <h1>Gestionar Negocio #<%= request.id %></h1>
+    <span class="badge badge-<%= request.estado %>"><%= request.estado.toUpperCase() %></span>
+</div>
+
+<div class="admin-detail-grid">
+    <!-- Columna Izquierda: Información y Estados -->
+    <div class="admin-col">
+        <!-- Ficha de la solicitud -->
+        <div class="card">
+            <h3><i data-lucide="user"></i> Información del Cliente</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Nombre:</th>
+                    <td><%= request.nombre_cliente %></td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td><a href="mailto:<%= request.email_cliente %>"><%= request.email_cliente %></a></td>
+                </tr>
+                <tr>
+                    <th>Teléfono:</th>
+                    <td><a href="tel:<%= request.telefono_cliente %>"><%= request.telefono_cliente %></a></td>
+                </tr>
+                <tr>
+                    <th>Fecha Solicitud:</th>
+                    <td><%= new Date(request.creado_en).toLocaleString('es-ES') %></td>
+                </tr>
+                <% if (request.mensaje) { %>
+                    <tr>
+                        <th>Mensaje:</th>
+                        <td><p class="msg-text"><%= request.mensaje %></p></td>
+                    </tr>
+                <% } %>
+            </table>
+        </div>
+
+        <!-- Coche Solicitado -->
+        <div class="card">
+            <h3><i data-lucide="car"></i> Coche Solicitado</h3>
+            <% if (request.coche_id) { %>
+                <table class="data-table">
+                    <tr>
+                        <th>Vehículo:</th>
+                        <td><strong><%= request.marca %> <%= request.modelo %></strong></td>
+                    </tr>
+                    <tr>
+                        <th>Precio Catálogo:</th>
+                        <td><%= parseFloat(request.precio_catalogo).toLocaleString('es-ES') %> €</td>
+                    </tr>
+                    <tr>
+                        <th>Acción:</th>
+                        <td><a href="/coches/<%= request.coche_id %>" target="_blank" class="btn btn-outline btn-xs"><i data-lucide="external-link"></i> Ver Ficha Técnica</a></td>
+                    </tr>
+                </table>
+            <% } else { %>
+                <p class="text-muted">Coche a la carta. No seleccionado del catálogo de la web.</p>
+            <% } %>
+        </div>
+
+        <!-- Control de Estados -->
+        <div class="card">
+            <h3><i data-lucide="toggle-left"></i> Cambiar Estado del Pedido</h3>
+            <form action="/admin/requests/<%= request.id %>/status" method="POST" class="status-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-group">
+                    <select name="estado" id="estado" class="form-select">
+                        <option value="pendiente" <%= request.estado === 'pendiente' ? 'selected' : '' %>>Pendiente (Recibido)</option>
+                        <option value="aprobado" <%= request.estado === 'aprobado' ? 'selected' : '' %>>Aprobado (Coche Reservado / En Proceso)</option>
+                        <option value="completado" <%= request.estado === 'completado' ? 'selected' : '' %>>Completado (Coche Vendido)</option>
+                        <option value="rechazado" <%= request.estado === 'rechazado' ? 'selected' : '' %>>Rechazado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="save"></i> Guardar Estado</button>
+            </form>
+            
+            <div class="status-tip">
+                <p><i data-lucide="info"></i> Al cambiar a <strong>Aprobado</strong>, el coche se marcará como <strong>reservado</strong>. Al cambiar a <strong>Completado</strong>, el coche pasará a estar <strong>vendido</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Finanzas y Gastos -->
+    <div class="admin-col">
+        <!-- Balance Financiero del coche -->
+        <div class="card financial-summary-card">
+            <h3><i data-lucide="calculator"></i> Balance del Coche</h3>
+            
+            <form action="/admin/requests/<%= request.id %>/price" method="POST" class="price-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-group inline-form">
+                    <label for="precio_venta">Precio Venta Acordado (€):</label>
+                    <input type="number" id="precio_venta" name="precio_venta" placeholder="Ej: 22000" value="<%= request.precio_venta || '' %>" step="0.01" required>
+                    <button type="submit" class="btn btn-primary btn-xs">Guardar</button>
+                </div>
+            </form>
+
+            <hr class="divider">
+
+            <div class="financial-flow">
+                <div class="flow-row">
+                    <span>Precio Venta:</span>
+                    <strong><%= request.precio_venta ? parseFloat(request.precio_venta).toLocaleString('es-ES') + ' €' : 'No Definido' %></strong>
+                </div>
+                <div class="flow-row">
+                    <span>(-) Gastos Acumulados:</span>
+                    <strong class="text-danger"><%= totalExpenses.toLocaleString('es-ES') %> €</strong>
+                </div>
+                <hr class="divider">
+                <div class="flow-row total-row">
+                    <span>Beneficio Estimado:</span>
+                    <% if (profit !== null) { %>
+                        <strong class="<%= profit >= 0 ? 'text-success' : 'text-danger' %>"><%= profit.toLocaleString('es-ES') %> €</strong>
+                    <% } else { %>
+                        <strong class="text-muted">Defina el precio de venta</strong>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gastos Registrados -->
+        <div class="card">
+            <h3><i data-lucide="receipt"></i> Gastos de Importación</h3>
+            
+            <% if (expenses.length === 0) { %>
+                <p class="text-muted">No se han registrado gastos todavía.</p>
+            <% } else { %>
+                <ul class="expenses-list">
+                    <% expenses.forEach(exp => { %>
+                        <li>
+                            <div class="expense-details">
+                                <span class="expense-concept"><%= exp.concepto %></span>
+                                <span class="expense-amount"><%= parseFloat(exp.monto).toLocaleString('es-ES') %> €</span>
+                            </div>
+                            <form action="/admin/requests/<%= request.id %>/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea eliminar este gasto?');">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="delete-expense-btn" title="Eliminar gasto"><i data-lucide="trash-2"></i></button>
+                            </form>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <hr class="divider">
+
+            <!-- Registrar Gasto -->
+            <h4>Registrar Nuevo Gasto</h4>
+            <form action="/admin/requests/<%= request.id %>/expenses" method="POST" class="add-expense-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-group">
+                    <label for="concepto">Concepto del Gasto</label>
+                    <input type="text" id="concepto" name="concepto" placeholder="Ej: Compra coche en origen, Grúa, ITV, Matriculación..." required>
+                </div>
+                <div class="form-group">
+                    <label for="monto">Importe (€)</label>
+                    <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit" class="btn btn-outline btn-sm btn-block"><i data-lucide="plus"></i> Añadir Gasto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="form-container">
+    <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success-card card text-center">
+            <div class="success-icon"><i data-lucide="check-circle"></i></div>
+            <h2>¡Solicitud Recibida Correctamente!</h2>
+            <p>Hemos registrado tu interés. Un especialista de nuestro equipo de importación se pondrá en contacto contigo en un plazo de 24 horas laborables para asesorarte en la compra y detallar los siguientes pasos.</p>
+            <a href="/" class="btn btn-primary"><i data-lucide="arrow-left"></i> Volver al Catálogo</a>
+        </div>
+    <% } else { %>
+        <div class="card">
+            <h1 class="text-center">Solicitar Importación de Vehículo</h1>
+            <p class="text-center text-muted">Rellena el formulario con tus datos de contacto y nos pondremos en contacto contigo de forma segura.</p>
+
+            <% if (coche) { %>
+                <div class="selected-car-box">
+                    <p><strong>Coche Seleccionado:</strong></p>
+                    <div class="selected-car-details">
+                        <span class="car-title"><%= coche.marca %> <%= coche.modelo %> (<%= coche.ano %>)</span>
+                        <span class="car-price"><%= parseFloat(coche.precio).toLocaleString('es-ES') %> €</span>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if (errors && errors.length > 0) { %>
+                <div class="error-alert">
+                    <h4>Corrija los siguientes errores:</h4>
+                    <ul>
+                        <% errors.forEach(err => { %>
+                            <li><%= err.msg %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            <% } %>
+
+            <form action="/importar" method="POST" class="secure-form">
+                <!-- CSRF Token de Seguridad -->
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                
+                <% if (coche) { %>
+                    <input type="hidden" name="coche_id" value="<%= coche.id %>">
+                <% } %>
+
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre Completo *</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" placeholder="Ej: Juan Pérez" value="<%= formData.nombre_cliente || '' %>" required>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="telefono_cliente">Teléfono de Contacto *</label>
+                        <input type="tel" id="telefono_cliente" name="telefono_cliente" placeholder="Ej: 600123456" value="<%= formData.telefono_cliente || '' %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email_cliente">Correo Electrónico *</label>
+                        <input type="email" id="email_cliente" name="email_cliente" placeholder="Ej: juan@ejemplo.com" value="<%= formData.email_cliente || '' %>" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="mensaje">Comentarios o Requisitos Adicionales (Opcional)</label>
+                    <textarea id="mensaje" name="mensaje" rows="5" placeholder="Cuéntanos si tienes alguna preferencia de color, extras o si deseas que busquemos un coche similar a la carta..."><%= formData.mensaje || '' %></textarea>
+                </div>
+
+                <div class="form-security-disclaimer">
+                    <p><i data-lucide="shield-check"></i> <strong>Garantía de Privacidad:</strong> Tus datos se almacenan en un entorno aislado sin acceso a internet externo. No compartimos tus datos con terceros.</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block"><i data-lucide="lock"></i> Enviar Solicitud Segura</button>
+            </form>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

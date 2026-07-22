@@ -1,0 +1,142 @@
+<%- include('../partials/header') %>
+
+<div class="back-link-container">
+    <a href="/admin/dashboard" class="back-link"><i data-lucide="arrow-left"></i> Volver al Dashboard</a>
+</div>
+
+<div class="admin-header">
+    <h1>Gestionar Catálogo de Vehículos</h1>
+    <p class="text-muted">Añade o retira coches disponibles para importación directa en la web.</p>
+</div>
+
+<div class="admin-detail-grid">
+    <!-- Columna Izquierda: Listado del Catálogo -->
+    <div class="admin-col">
+        <div class="card">
+            <h3><i data-lucide="list"></i> Vehículos Registrados</h3>
+            
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Coche</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (cars.length === 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No hay coches en el catálogo.</td>
+                            </tr>
+                        <% } else { %>
+                            <% cars.forEach(car => { %>
+                                <tr>
+                                    <td>
+                                        <div><strong><%= car.marca %> <%= car.modelo %></strong></div>
+                                        <div class="table-subtext"><%= car.ano %> &bull; <%= car.kilometros.toLocaleString() %> km</div>
+                                    </td>
+                                    <td><%= parseFloat(car.precio).toLocaleString('es-ES') %> €</td>
+                                    <td>
+                                        <span class="badge badge-<%= car.estado %>"><%= car.estado.toUpperCase() %></span>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/cars/<%= car.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea retirar este coche del catálogo? Esto borrará también sus imágenes asociadas.');" style="display:inline;">
+                                            <!-- Token CSRF -->
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-danger btn-xs"><i data-lucide="trash"></i> Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Formulario para añadir nuevo -->
+    <div class="admin-col">
+        <div class="card">
+            <h3><i data-lucide="plus-circle"></i> Registrar Nuevo Vehículo</h3>
+            
+            <!-- Pasamos _csrf en la URL ya que con multipart/form-data express-body-parser no lee req.body antes de multer -->
+            <form action="/admin/cars?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="secure-form">
+                
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="marca">Marca *</label>
+                        <input type="text" id="marca" name="marca" placeholder="Ej: Audi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelo">Modelo *</label>
+                        <input type="text" id="modelo" name="modelo" placeholder="Ej: Q5" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="ano">Año *</label>
+                        <input type="number" id="ano" name="ano" min="1990" max="2030" placeholder="2022" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kilometros">Kilómetros *</label>
+                        <input type="number" id="kilometros" name="kilometros" placeholder="Ej: 45000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="precio">Precio de Venta Base / Catálogo (€) *</label>
+                    <input type="number" id="precio" name="precio" step="0.01" placeholder="Ej: 34900" required>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="combustible">Combustible</label>
+                        <select id="combustible" name="combustible">
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Diésel">Diésel</option>
+                            <option value="Híbrido">Híbrido</option>
+                            <option value="Eléctrico">Eléctrico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transmision">Transmisión</label>
+                        <select id="transmision" name="transmision">
+                            <option value="Automático">Automático</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="motor">Motor</label>
+                        <input type="text" id="motor" name="motor" placeholder="Ej: 2.0 TDI">
+                    </div>
+                    <div class="form-group">
+                        <label for="potencia">Potencia</label>
+                        <input type="text" id="potencia" name="potencia" placeholder="Ej: 190 CV">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción / Comentarios adicionales</label>
+                    <textarea id="descripcion" name="descripcion" rows="4" placeholder="Detalla los extras principales del coche (techo solar, sensores, tapicería...)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagenes">Imágenes del Vehículo (Soporta múltiples) *</label>
+                    <input type="file" id="imagenes" name="imagenes" accept="image/png, image/jpeg, image/jpg, image/webp" multiple required>
+                    <small class="text-muted">Formatos permitidos: PNG, JPG, JPEG, WEBP. Máximo 5MB por archivo. Máximo 10 archivos.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block"><i data-lucide="plus"></i> Registrar en Catálogo</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
