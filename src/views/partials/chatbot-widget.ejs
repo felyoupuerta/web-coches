@@ -1,0 +1,56 @@
+<!-- Chatbot de IA: consulta el catálogo en lenguaje natural (Ollama + MySQL de solo lectura) -->
+<div class="chatbot-widget" id="chatbot-widget">
+    <button
+        class="fab chatbot-toggle"
+        id="chatbot-toggle"
+        aria-label="Abrir asistente de IA"
+        aria-expanded="false"
+        aria-controls="chatbot-panel"
+        title="Pregúntale a nuestro asistente"
+    >
+        <i data-lucide="bot"></i>
+    </button>
+
+    <section
+        class="chatbot-panel"
+        id="chatbot-panel"
+        role="dialog"
+        aria-label="Asistente de Luxe Imports"
+        aria-hidden="true"
+        hidden
+    >
+        <header class="chatbot-panel-header">
+            <div class="chatbot-panel-title">
+                <i data-lucide="bot"></i>
+                <div>
+                    <strong>Asistente Luxe Imports</strong>
+                    <span>Pregunta por nuestro catálogo</span>
+                </div>
+            </div>
+            <button class="chatbot-close" id="chatbot-close" aria-label="Cerrar asistente">
+                <i data-lucide="x"></i>
+            </button>
+        </header>
+
+        <div class="chatbot-messages" id="chatbot-messages" aria-live="polite">
+            <div class="chatbot-msg chatbot-msg-bot">
+                Hola, soy el asistente de Luxe Imports. Pregúntame por disponibilidad, precio, año o
+                combustible de nuestros vehículos, por ejemplo: <em>«¿Tenéis algún BMW diésel por menos de 30.000 €?»</em>
+            </div>
+        </div>
+
+        <form class="chatbot-form" id="chatbot-form" autocomplete="off">
+            <input
+                type="text"
+                id="chatbot-input"
+                name="pregunta"
+                placeholder="Escribe tu pregunta..."
+                maxlength="300"
+                required
+            >
+            <button type="submit" class="chatbot-send" aria-label="Enviar pregunta">
+                <i data-lucide="send"></i>
+            </button>
+        </form>
+    </section>
+</div>

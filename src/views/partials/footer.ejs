@@ -34,7 +34,13 @@
     </footer>
 
     <%- include('floating-contact') %>
+    <% if (!locals.adminUser) { %>
+        <%- include('chatbot-widget') %>
+    <% } %>
 
     <script src="/js/main.js" defer></script>
+    <% if (!locals.adminUser) { %>
+        <script src="/js/chatbot.js" defer></script>
+    <% } %>
 </body>
 </html>

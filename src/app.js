@@ -30,6 +30,7 @@ const AuthController = require('./controllers/authController');
 const AccountingController = require('./controllers/accountingController');
 const HomeController = require('./controllers/homeController');
 const SearchRequestController = require('./controllers/searchRequestController');
+const ChatbotController = require('./controllers/chatbotController');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
@@ -169,6 +170,18 @@ const formLimiter = rateLimit({
     }
 });
 
+const chatbotLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Has hecho demasiadas preguntas al asistente. Espera unos minutos e inténtalo de nuevo.',
+    handler: (req, res, next, options) => {
+        logger.warn(`Rate limit del chatbot superado desde IP: ${req.ip}`);
+        res.status(429).json({ error: options.message });
+    }
+});
+
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 300,
@@ -196,6 +209,9 @@ app.post('/importar', formLimiter, csrfCheck, RequestController.validateRequest,
 
 // Ruta Pública del Wizard "Búsqueda a la Carta" (landing)
 app.post('/solicitar-busqueda', formLimiter, csrfCheck, SearchRequestController.validateSearchRequest, SearchRequestController.submitSearchRequest);
+
+// Ruta Pública del Chatbot de IA (consulta catálogo vía Ollama, solo lectura)
+app.post('/api/chatbot', chatbotLimiter, csrfCheck, ChatbotController.chat);
 
 // Rutas de Autenticación Admin
 app.get('/admin/login', AuthController.showLogin);
