@@ -9,6 +9,7 @@
                 <p>Importación premium de vehículos desde Alemania directamente a España. Nos encargamos de la selección, el transporte certificado, la homologación y la matriculación.</p>
             </div>
 
+            <% if (!locals.adminUser) { %>
             <div class="footer-links">
                 <h4>Navegación</h4>
                 <ul>
@@ -18,6 +19,7 @@
                     <li><a href="/admin/login"><i data-lucide="chevron-right"></i> Acceso Personal</a></li>
                 </ul>
             </div>
+            <% } %>
 
             <div class="footer-contact">
                 <h4>Contacto y Ubicación</h4>
