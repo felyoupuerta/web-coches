@@ -42,7 +42,7 @@
                                         <span class="badge badge-<%= car.estado %>"><%= car.estado.toUpperCase() %></span>
                                     </td>
                                     <td>
-                                        <form action="/admin/cars/<%= car.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea retirar este coche del catálogo? Esto borrará también sus imágenes asociadas.');" style="display:inline;">
+                                        <form action="/admin/cars/<%= car.id %>/delete" method="POST" class="form-inline-block" data-confirm="¿Seguro que desea retirar este coche del catálogo? Esto borrará también sus imágenes asociadas.">
                                             <!-- Token CSRF -->
                                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                             <button type="submit" class="btn btn-danger btn-xs"><i data-lucide="trash"></i> Eliminar</button>

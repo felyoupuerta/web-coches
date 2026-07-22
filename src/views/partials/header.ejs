@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Servicio profesional de importación de coches premium desde Alemania a España. Garantía, rapidez y gestión integral.">
-    <title><%= title || 'Importación de Coches de Alemania a España' %></title>
+    <meta name="description" content="Luxe Imports: importación premium de vehículos de Alemania a España. Selección verificada, transporte asegurado y gestión de matriculación llave en mano.">
+    <meta name="theme-color" content="#0b0f19">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Luxe Imports">
+    <meta property="og:title" content="<%= title || 'Luxe Imports - Importación Premium de Vehículos' %>">
+    <meta property="og:description" content="Importación premium de vehículos de Alemania a España, con gestión integral y garantía de confianza.">
+    <title><%= title || 'Luxe Imports - Importación Premium de Vehículos' %></title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230b0f19'/><text x='50' y='68' font-family='Georgia,serif' font-size='58' font-weight='700' fill='%23f59e0b' text-anchor='middle'>L</text></svg>">
     <!-- Fuentes premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Iconos Lucide (CDN ligero) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
     <!-- Estilos personalizados -->
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <header class="app-header">
         <div class="container navbar">
             <a href="/" class="logo">
-                <span class="logo-accent">DEUTSCH</span><span class="logo-main">IMPORT</span>
+                <span class="logo-accent">LUXE</span><span class="logo-main">IMPORTS</span>
             </a>
-            
+
             <nav class="nav-menu">
                 <a href="/" class="nav-link"><i data-lucide="car"></i> Catálogo</a>
                 <a href="/importar" class="nav-link"><i data-lucide="file-text"></i> Solicitar Importación</a>
@@ -33,9 +40,9 @@
                     <a href="/admin/login" class="nav-link login-link"><i data-lucide="lock"></i> Acceso Admin</a>
                 <% } %>
             </nav>
-            <button class="menu-toggle" aria-label="Abrir menú">
+            <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
                 <i data-lucide="menu"></i>
             </button>
         </div>
     </header>
-    <main class="main-content container">
+    <main id="main-content" class="main-content container">

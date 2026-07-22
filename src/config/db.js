@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     port: parseInt(process.env.DB_PORT, 10) || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || '',
-    database: process.env.DB_NAME || 'web_coches_alemania',
+    database: process.env.DB_NAME || 'db_luxe_imports',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,

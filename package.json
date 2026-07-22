@@ -1,7 +1,7 @@
 {
-  "name": "web-coches-alemania",
-  "version": "1.0.0",
-  "description": "Aplicación web segura para portal de importación de coches desde Alemania",
+  "name": "luxe-imports",
+  "version": "1.1.0",
+  "description": "Portal web seguro de Luxe Imports para importación premium de vehículos desde Alemania",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
@@ -11,14 +11,16 @@
     "express",
     "mariadb",
     "security",
-    "car-import"
+    "car-import",
+    "luxe-imports"
   ],
-  "author": "Antigravity",
+  "author": "Luxe Imports",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
     "express-session": "^1.18.0",
     "express-validator": "^7.1.0",
     "helmet": "^7.1.0",

@@ -138,7 +138,7 @@
                                 <span class="expense-concept"><%= exp.concepto %></span>
                                 <span class="expense-amount"><%= parseFloat(exp.monto).toLocaleString('es-ES') %> €</span>
                             </div>
-                            <form action="/admin/requests/<%= request.id %>/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea eliminar este gasto?');">
+                            <form action="/admin/requests/<%= request.id %>/expenses/<%= exp.id %>/delete" method="POST" data-confirm="¿Seguro que desea eliminar este gasto?">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <button type="submit" class="delete-expense-btn" title="Eliminar gasto"><i data-lucide="trash-2"></i></button>
                             </form>

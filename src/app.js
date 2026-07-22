@@ -22,6 +22,7 @@ const path = require('path');
 const fs = require('fs');
 const session = requireWithMessage('express-session');
 const helmet = requireWithMessage('helmet');
+const rateLimit = requireWithMessage('express-rate-limit');
 const crypto = require('crypto');
 const CarController = require('./controllers/carController');
 const RequestController = require('./controllers/requestController');
@@ -30,38 +31,50 @@ const AuthController = require('./controllers/authController');
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
+const isProduction = process.env.NODE_ENV === 'production';
+
+// SEGURIDAD: en producción es obligatorio definir un SESSION_SECRET propio.
+// Un valor por defecto embebido en el código permitiría a cualquiera que
+// lea el repositorio falsificar sesiones de administrador.
+if (isProduction && !process.env.SESSION_SECRET) {
+    logger.error('SESSION_SECRET no está definido en producción. Abortando arranque por seguridad.');
+    process.exit(1);
+}
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 
 // Configurar trust proxy por estar tras un proxy inverso (Nginx) en LXC
 app.set('trust proxy', 1);
 
 // --- MEDIDAS DE SEGURIDAD ---
 
-// 1. Cabeceras de seguridad HTTP con Helmet (con CSP adaptado para CDNs externos)
+// 1. Cabeceras de seguridad HTTP con Helmet (CSP estricta, sin 'unsafe-inline':
+//    todo el JS/CSS vive en archivos externos versionados, ver public/js/main.js)
 app.use(
     helmet({
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                scriptSrc: ["'self'", "https://unpkg.com"],
+                styleSrc: ["'self'", "https://fonts.googleapis.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 imgSrc: ["'self'", "data:", "blob:"],
                 connectSrc: ["'self'"],
                 objectSrc: ["'none'"],
-                upgradeInsecureRequests: null,
+                baseUri: ["'self'"],
+                frameAncestors: ["'self'"],
+                upgradeInsecureRequests: [],
             },
         },
         xPoweredBy: false // Eliminar cabecera que delata tecnología Express
     })
 );
 
-// 2. Parsers de petición
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// 2. Parsers de petición (con límite de tamaño explícito contra abuso de payloads)
+app.use(express.urlencoded({ extended: true, limit: '200kb' }));
+app.use(express.json({ limit: '200kb' }));
 
 // 3. Servir archivos estáticos (Apuntando a la raíz fuera de /src)
 app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // 4. Configurar motor de vistas (EJS)
 app.set('view engine', 'ejs');
@@ -70,13 +83,13 @@ app.set('views', path.join(__dirname, 'views'));
 // 5. Configurar Sesiones de Express
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || 'secreto_seguridad_por_defecto_9824',
+        secret: SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
-        name: process.env.NODE_ENV === 'production' ? '__Secure-sess-id' : 'sess-id',
+        name: isProduction ? '__Secure-sess-id' : 'sess-id',
         cookie: {
             httpOnly: true, // Impedir lectura de cookies por JS del lado del cliente (mitiga XSS)
-            secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+            secure: isProduction, // Solo HTTPS en producción
             sameSite: 'lax', // Protección ante ataques CSRF
             maxAge: 3 * 60 * 60 * 1000 // Expira en 3 horas
         }
@@ -97,15 +110,21 @@ app.use((req, res, next) => {
 });
 
 // Middleware de verificación de CSRF en peticiones de modificación de estado (POST)
+// Comparación en tiempo constante para evitar fugas de información por timing.
 const csrfCheck = (req, res, next) => {
     if (req.method === 'POST') {
         // Aceptar token de body, query params (útil en multipart/form-data) o headers
         const tokenReceived = req.body?._csrf || req.query?._csrf || req.headers['x-csrf-token'];
         const tokenSession = req.session?.csrfToken;
 
-        if (!tokenReceived || tokenReceived !== tokenSession) {
+        let valid = false;
+        if (typeof tokenReceived === 'string' && typeof tokenSession === 'string' && tokenReceived.length === tokenSession.length) {
+            valid = crypto.timingSafeEqual(Buffer.from(tokenReceived), Buffer.from(tokenSession));
+        }
+
+        if (!valid) {
             logger.warn(`Intento de violación CSRF detectado desde IP: ${req.ip}`);
-            return res.status(403).render('error', { 
+            return res.status(403).render('error', {
                 message: 'Petición rechazada debido a fallo de seguridad CSRF. Inténtelo de nuevo.',
                 title: 'Error de Seguridad (CSRF)'
             });
@@ -114,10 +133,51 @@ const csrfCheck = (req, res, next) => {
     next();
 };
 
+// 7. Límites de frecuencia (rate limiting) a nivel de aplicación.
+//    Complementan al límite de Nginx: protegen también en despliegues sin
+//    proxy inverso delante (p. ej. entornos de desarrollo o pruebas directas).
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 8,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Demasiados intentos de acceso. Inténtalo de nuevo en unos minutos.',
+    handler: (req, res, next, options) => {
+        logger.warn(`Rate limit de login superado desde IP: ${req.ip}`);
+        res.status(429).render('error', {
+            message: options.message,
+            title: 'Demasiados Intentos'
+        });
+    }
+});
+
+const formLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Has enviado demasiadas solicitudes. Inténtalo de nuevo más tarde.',
+    handler: (req, res, next, options) => {
+        logger.warn(`Rate limit de formulario público superado desde IP: ${req.ip}`);
+        res.status(429).render('error', {
+            message: options.message,
+            title: 'Demasiadas Solicitudes'
+        });
+    }
+});
+
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 300,
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use(globalLimiter);
+
 // --- DECLARACIÓN DE RUTAS ---
 
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', service: 'web-coches-alemania' });
+    res.status(200).json({ status: 'ok', service: 'luxe-imports' });
 });
 
 // Rutas Públicas de Catálogo de Coches
@@ -126,11 +186,11 @@ app.get('/coches/:id', CarController.showCarDetails);
 
 // Rutas Públicas de Solicitudes (Pedidos)
 app.get('/importar', RequestController.showRequestForm);
-app.post('/importar', csrfCheck, RequestController.validateRequest, RequestController.submitRequest);
+app.post('/importar', formLimiter, csrfCheck, RequestController.validateRequest, RequestController.submitRequest);
 
 // Rutas de Autenticación Admin
 app.get('/admin/login', AuthController.showLogin);
-app.post('/admin/login', csrfCheck, AuthController.login);
+app.post('/admin/login', loginLimiter, csrfCheck, AuthController.login);
 app.get('/admin/logout', AuthController.logout);
 
 // Rutas de Panel de Administración Protegidas
@@ -147,7 +207,7 @@ app.post('/admin/requests/:requestId/expenses/:expenseId/delete', AuthController
 app.get('/admin/cars', AuthController.requireAdmin, CarController.showAdminCars);
 
 // Importante: uploadMiddleware va antes de csrfCheck para procesar multipart/form-data
-app.post('/admin/cars', AuthController.requireAdmin, CarController.uploadMiddleware, csrfCheck, CarController.createCar);
+app.post('/admin/cars', AuthController.requireAdmin, CarController.uploadMiddleware, csrfCheck, CarController.validateCar, CarController.createCar);
 
 app.post('/admin/cars/:id/delete', AuthController.requireAdmin, csrfCheck, CarController.deleteCar);
 

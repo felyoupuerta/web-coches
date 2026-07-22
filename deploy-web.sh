@@ -1,5 +1,5 @@
-
- pipefail
+#!/usr/bin/env bash
+set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$APP_DIR"
@@ -20,9 +20,9 @@ export $(grep -v '^#' .env | xargs)
 
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
-DB_USER="${DB_USER:-atdb}"
+DB_USER="${DB_USER:-luxe_user}"
 DB_PASS="${DB_PASS:-}"
-DB_NAME="${DB_NAME:-db_coches_matriz}"
+DB_NAME="${DB_NAME:-db_luxe_imports}"
 PORT="${PORT:-3000}"
 NODE_ENV="${NODE_ENV:-production}"
 HOST="${HOST:-0.0.0.0}"
@@ -104,7 +104,7 @@ if [[ ! -f src/app.js ]]; then
 fi
 
 echo "[8/8] Levantando la aplicación con PM2..."
-pm2 delete web-coches >/dev/null 2>&1 || true
+pm2 delete luxe-imports >/dev/null 2>&1 || true
 
 # Iniciar la aplicación con variables de entorno
 PORT="$PORT" \
@@ -116,7 +116,7 @@ DB_PORT="$DB_PORT" \
 DB_USER="$DB_USER" \
 DB_PASS="$DB_PASS" \
 DB_NAME="$DB_NAME" \
-pm2 start src/app.js --name web-coches --cwd "$APP_DIR"
+pm2 start src/app.js --name luxe-imports --cwd "$APP_DIR"
 
 pm2 save
 pm2 startup systemd -u "$USER" --hp "$HOME" || true
@@ -149,9 +149,9 @@ echo "   Base de datos: ${DB_NAME}"
 echo "   Usuario: ${DB_USER}"
 echo ""
 echo "🛠️  Comandos útiles:"
-echo "   Ver logs: pm2 logs web-coches"
-echo "   Reiniciar: pm2 restart web-coches"
-echo "   Parar: pm2 stop web-coches"
+echo "   Ver logs: pm2 logs luxe-imports"
+echo "   Reiniciar: pm2 restart luxe-imports"
+echo "   Parar: pm2 stop luxe-imports"
 echo "   Estado: pm2 status"
 echo ""
 echo "👤 Crear usuario administrador:"

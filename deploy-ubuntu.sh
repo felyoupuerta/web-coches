@@ -33,9 +33,9 @@ PY
 
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
-DB_USER="${DB_USER:-atdb}"
+DB_USER="${DB_USER:-luxe_user}"
 DB_PASS="${DB_PASS:-}"
-DB_NAME="${DB_NAME:-db_coches_matriz}"
+DB_NAME="${DB_NAME:-db_luxe_imports}"
 PORT="${PORT:-3000}"
 NODE_ENV="${NODE_ENV:-production}"
 HOST="${HOST:-0.0.0.0}"
@@ -65,11 +65,11 @@ sudo systemctl enable mariadb >/dev/null 2>&1 || true
 sudo systemctl start mariadb >/dev/null 2>&1 || true
 
 echo "[5/8] Creando base de datos y usuario desde los valores del .env..."
-sudo mariadb -e "CREATE DATABASE IF NOT EXISTS \\`${DB_NAME}\\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mariadb -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 sudo mariadb -e "CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
 sudo mariadb -e "CREATE USER IF NOT EXISTS '${DB_USER}'@'127.0.0.1' IDENTIFIED BY '${DB_PASS}';"
-sudo mariadb -e "GRANT ALL PRIVILEGES ON \\`${DB_NAME}\\`.* TO '${DB_USER}'@'localhost';"
-sudo mariadb -e "GRANT ALL PRIVILEGES ON \\`${DB_NAME}\\`.* TO '${DB_USER}'@'127.0.0.1';"
+sudo mariadb -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';"
+sudo mariadb -e "GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'127.0.0.1';"
 sudo mariadb -e "FLUSH PRIVILEGES;"
 
 if [[ -f db/schema.sql ]]; then
@@ -84,8 +84,8 @@ echo "[7/8] Instalando dependencias de Node.js..."
 npm install --omit=dev
 
 echo "[8/8] Levantando la web con PM2 y habilitando reinicios..."
-pm2 delete web-coches >/dev/null 2>&1 || true
-PORT="$PORT" HOST="$HOST" NODE_ENV="$NODE_ENV" SESSION_SECRET="$SESSION_SECRET" pm2 start src/app.js --name web-coches --cwd "$APP_DIR"
+pm2 delete luxe-imports >/dev/null 2>&1 || true
+PORT="$PORT" HOST="$HOST" NODE_ENV="$NODE_ENV" SESSION_SECRET="$SESSION_SECRET" pm2 start src/app.js --name luxe-imports --cwd "$APP_DIR"
 pm2 save >/dev/null 2>&1 || true
 pm2 startup systemd -u "$USER" --hp "$HOME" >/dev/null 2>&1 || true
 
@@ -105,8 +105,8 @@ echo "¡Despliegue completado!"
 echo "URL de acceso: http://${SERVER_IP}:${PORT}"
 echo "URL local: http://localhost:${PORT}"
 echo "Health check: http://${SERVER_IP}:${PORT}/health"
-echo "Logs: pm2 logs web-coches"
-echo "Reiniciar: pm2 restart web-coches"
-echo "Parar: pm2 stop web-coches"
-echo "Creadr Admin con: npm run seed-admin <usu> <pass>
+echo "Logs: pm2 logs luxe-imports"
+echo "Reiniciar: pm2 restart luxe-imports"
+echo "Parar: pm2 stop luxe-imports"
+echo "Crear Admin con: npm run seed-admin <usuario> <password>"
 echo "============================================================"

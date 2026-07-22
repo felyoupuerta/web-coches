@@ -44,7 +44,7 @@ const AuthController = {
         if (req.session.adminId) {
             return res.redirect('/admin/dashboard');
         }
-        res.render('login', { error: null, title: 'Acceso Admin - Importación de Coches' });
+        res.render('login', { error: null, title: 'Acceso Admin - Luxe Imports' });
     },
 
     // Procesar el Login
@@ -55,7 +55,7 @@ const AuthController = {
             if (!usuario || !password) {
                 return res.render('login', { 
                     error: 'Por favor, rellene todos los campos.', 
-                    title: 'Acceso Admin - Importación de Coches' 
+                    title: 'Acceso Admin - Luxe Imports' 
                 });
             }
 
@@ -65,7 +65,7 @@ const AuthController = {
                 HashUtil.verify(password, 'dummy_salt:dummy_hash');
                 return res.render('login', { 
                     error: 'Credenciales inválidas.', 
-                    title: 'Acceso Admin - Importación de Coches' 
+                    title: 'Acceso Admin - Luxe Imports' 
                 });
             }
 
@@ -73,7 +73,7 @@ const AuthController = {
             if (!isMatch) {
                 return res.render('login', { 
                     error: 'Credenciales inválidas.', 
-                    title: 'Acceso Admin - Importación de Coches' 
+                    title: 'Acceso Admin - Luxe Imports' 
                 });
             }
 
@@ -87,7 +87,7 @@ const AuthController = {
             logger.error('Fallo en el proceso de autenticación de admin: ' + err.message, { error: err });
             res.render('login', { 
                 error: 'Ocurrió un error inesperado. Por favor, intente de nuevo.', 
-                title: 'Acceso Admin - Importación de Coches' 
+                title: 'Acceso Admin - Luxe Imports' 
             });
         }
     },
@@ -119,8 +119,8 @@ const AuthController = {
     async showUsersPage(req, res) {
         try {
             const usuarios = await UserModel.findAll();
-            res.render('admin/gesusus', {
-                title: 'Gestionar Usuarios - DeutschImport',
+            res.render('admin/usuarios', {
+                title: 'Gestionar Usuarios - Luxe Imports',
                 usuarios,
                 adminUser: req.session.adminUser
             });

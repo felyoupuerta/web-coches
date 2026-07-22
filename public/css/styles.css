@@ -1,4 +1,4 @@
-/* --- SISTEMA DE DISEÑO DEUTSCHIMPORT (VANILLA CSS) --- */
+/* --- SISTEMA DE DISEÑO LUXE IMPORTS (VANILLA CSS) --- */
 
 :root {
     /* Colores Principales (Aesthetic Premium) */
@@ -38,8 +38,16 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: var(--bg-main);
+    background-image:
+        radial-gradient(circle at 15% 0%, rgba(245, 158, 11, 0.06), transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(59, 130, 246, 0.05), transparent 40%);
+    background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-body);
     line-height: 1.6;
@@ -47,6 +55,82 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+::selection {
+    background-color: var(--primary);
+    color: var(--bg-main);
+}
+
+/* Accesibilidad: enlace de salto de navegación para usuarios de teclado/lector */
+.skip-link {
+    position: absolute;
+    top: -60px;
+    left: 1rem;
+    z-index: 1000;
+    background: var(--primary);
+    color: var(--bg-main);
+    font-weight: 700;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+    top: 1rem;
+    color: var(--bg-main);
+}
+
+/* Accesibilidad: foco visible consistente y de marca en todos los elementos interactivos */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.thumbnail:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.form-inline-block {
+    display: inline;
+}
+
+/* Micro-interacción de entrada: animación CSS pura (sin JS) para que las
+   tarjetas del catálogo aparezcan con un fade-in suave y escalonado. Al no
+   depender de JavaScript, el contenido nunca queda oculto si un script
+   falla al cargar o el usuario navega con JS deshabilitado. */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reveal-on-scroll {
+    animation: fadeInUp 0.5s ease both;
+}
+
+.cars-grid .reveal-on-scroll:nth-child(2) { animation-delay: 0.05s; }
+.cars-grid .reveal-on-scroll:nth-child(3) { animation-delay: 0.1s; }
+.cars-grid .reveal-on-scroll:nth-child(4) { animation-delay: 0.15s; }
+.cars-grid .reveal-on-scroll:nth-child(5) { animation-delay: 0.2s; }
+.cars-grid .reveal-on-scroll:nth-child(n+6) { animation-delay: 0.25s; }
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -427,14 +511,29 @@ textarea:focus {
 
 /* --- HERO SECTION --- */
 .hero-section {
-    padding: 3rem 0;
-    margin-bottom: 2rem;
+    padding: 3.5rem 0 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-eyebrow {
+    display: inline-block;
+    font-family: var(--font-headings);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
 }
 
 .hero-section h1 {
     font-size: 2.75rem;
     line-height: 1.2;
     margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 40%, var(--text-light));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .hero-section p {
@@ -442,6 +541,42 @@ textarea:focus {
     color: var(--text-muted);
     max-width: 700px;
     margin: 0 auto;
+}
+
+/* --- BARRA DE CONFIANZA --- */
+.trust-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 2rem;
+    padding: 1.25rem 1.5rem;
+    margin: 0 auto 2.5rem;
+    max-width: 1000px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.trust-item i {
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .trust-bar {
+        justify-content: flex-start;
+    }
 }
 
 /* --- FILTROS --- */
@@ -1265,14 +1400,20 @@ textarea:focus {
         background-color: var(--bg-main);
         border-bottom: 1px solid var(--border-color);
         flex-direction: column;
-        padding: 1.5rem;
+        padding: 0 1.5rem;
         gap: 1rem;
-        display: none;
-        box-shadow: var(--shadow-lg);
-    }
-    
-    .nav-menu.active {
         display: flex;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        box-shadow: var(--shadow-lg);
+        transition: max-height var(--transition-normal), opacity var(--transition-normal), padding var(--transition-normal);
+    }
+
+    .nav-menu.active {
+        max-height: 400px;
+        opacity: 1;
+        padding: 1.5rem;
     }
 
     .form-group-row {

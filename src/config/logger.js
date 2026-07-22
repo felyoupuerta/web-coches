@@ -26,7 +26,7 @@ const appRoot = path.resolve(__dirname, '..', '..');
 const logDir = resolveWritableDirectory([
     path.join(appRoot, 'logs'),
     path.join(process.cwd(), 'logs'),
-    '/tmp/web-coches-logs'
+    '/tmp/luxe-imports-logs'
 ]);
 
 function createLoggerFallback() {

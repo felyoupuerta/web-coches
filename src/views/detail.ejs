@@ -21,7 +21,7 @@
         <% if (images.length > 1) { %>
             <div class="thumbnails-grid">
                 <% images.forEach((img, index) => { %>
-                    <div class="thumbnail <%= index === 0 ? 'active' : '' %>" onclick="switchImage('<%= img.ruta_imagen %>', this)">
+                    <div class="thumbnail <%= index === 0 ? 'active' : '' %>" data-image="<%= img.ruta_imagen %>" role="button" tabindex="0" aria-label="Ver imagen <%= index + 1 %> de <%= car.marca %> <%= car.modelo %>">
                         <img src="<%= img.ruta_imagen %>" alt="Vista <%= index + 1 %>">
                     </div>
                 <% }) %>
@@ -90,15 +90,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    function switchImage(src, thumbnailEl) {
-        document.getElementById('main-gallery-img').src = src;
-        // Quitar clase activa de todos
-        document.querySelectorAll('.thumbnail').forEach(el => el.classList.remove('active'));
-        // Añadir a este
-        thumbnailEl.classList.add('active');
-    }
-</script>
 
 <%- include('partials/footer') %>

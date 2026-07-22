@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Script de Despliegue Automatizado - DeutschImport Web Portal
+# Script de Despliegue Automatizado - Luxe Imports - Portal Web
 # Diseñado para Ubuntu Server 20.04 / 22.04 LTS
 # ==============================================================================
 
@@ -79,10 +79,10 @@ fi
 echo -e "\n${BLUE}[6/6] Levantando el servicio en segundo plano con PM2...${NC}"
 
 # Eliminar proceso PM2 anterior si existiese para evitar duplicados
-pm2 delete web-coches &> /dev/null
+pm2 delete luxe-imports &> /dev/null
 
 # Iniciar aplicación
-pm2 start src/app.js --name "web-coches"
+pm2 start src/app.js --name "luxe-imports"
 
 # Configurar PM2 para que se levante tras reiniciar el sistema
 pm2 save
@@ -97,6 +97,6 @@ echo -e "${YELLOW}$PM2_STARTUP_CMD${NC}"
 echo -e "\n${BLUE}Siguientes pasos recomendados:${NC}"
 echo -e "1. Modifica tus credenciales en el archivo de entorno: ${YELLOW}nano .env${NC}"
 echo -e "2. Crea tu usuario administrador inicial con: ${YELLOW}npm run seed-admin <usuario> <contraseña>${NC}"
-echo -e "3. Reinicia la aplicación tras configurar el .env: ${YELLOW}pm2 restart web-coches${NC}"
-echo -e "4. Revisa los logs en caso de fallos: ${YELLOW}pm2 logs web-coches${NC} o ${YELLOW}cat logs/error.log${NC}"
+echo -e "3. Reinicia la aplicación tras configurar el .env: ${YELLOW}pm2 restart luxe-imports${NC}"
+echo -e "4. Revisa los logs en caso de fallos: ${YELLOW}pm2 logs luxe-imports${NC} o ${YELLOW}cat logs/error.log${NC}"
 echo -e "======================================================="

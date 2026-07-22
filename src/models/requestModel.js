@@ -140,14 +140,17 @@ const RequestModel = {
     },
 
     /**
-     * Elimina un gasto de una solicitud/pedido
-     * @param {number} gastoId 
+     * Elimina un gasto de una solicitud/pedido.
+     * Se exige también el solicitudId para evitar que un ID de pedido
+     * manipulado permita borrar gastos que pertenecen a otro pedido (IDOR).
+     * @param {number} gastoId
+     * @param {number} solicitudId
      * @returns {Promise<boolean>}
      */
-    async deleteExpense(gastoId) {
+    async deleteExpense(gastoId, solicitudId) {
         try {
-            const query = 'DELETE FROM gastos_pedido WHERE id = ?';
-            const [result] = await db.execute(query, [gastoId]);
+            const query = 'DELETE FROM gastos_pedido WHERE id = ? AND solicitud_id = ?';
+            const [result] = await db.execute(query, [gastoId, solicitudId]);
             return result.affectedRows > 0;
         } catch (err) {
             logger.error('Error en RequestModel.deleteExpense: ' + err.message, { error: err });

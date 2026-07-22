@@ -5,18 +5,23 @@ const logger = require('../config/logger');
 
 const RequestController = {
     
-    // Reglas de validación para el formulario de contacto (seguridad XSS)
+    // Reglas de validación para el formulario de contacto.
+    // Nota: NO se usa .escape() aquí a propósito. Las vistas EJS ya escapan
+    // automáticamente con <%= %> al renderizar; aplicar .escape() aquí ADEMÁS
+    // provocaría doble-codificación (p. ej. un nombre "O'Donnell" se guardaría
+    // como "O&#x27;Donnell" y se mostraría literalmente así en pantalla).
+    // La sanitización de longitud/formato es la defensa aquí; el escapado de
+    // salida es responsabilidad única de la capa de vistas.
     validateRequest: [
         body('nombre_cliente')
             .trim()
             .notEmpty().withMessage('El nombre es requerido.')
-            .isLength({ min: 2, max: 100 }).withMessage('El nombre debe tener entre 2 y 100 caracteres.')
-            .escape(),
+            .isLength({ min: 2, max: 100 }).withMessage('El nombre debe tener entre 2 y 100 caracteres.'),
         body('telefono_cliente')
             .trim()
             .notEmpty().withMessage('El teléfono es requerido.')
             .isLength({ min: 8, max: 20 }).withMessage('El teléfono debe tener entre 8 y 20 caracteres.')
-            .escape(),
+            .matches(/^[0-9+\s()-]+$/).withMessage('El teléfono contiene caracteres no válidos.'),
         body('email_cliente')
             .trim()
             .notEmpty().withMessage('El correo electrónico es requerido.')
@@ -25,8 +30,7 @@ const RequestController = {
         body('mensaje')
             .optional()
             .trim()
-            .isLength({ max: 1000 }).withMessage('El mensaje no puede superar los 1000 caracteres.')
-            .escape(),
+            .isLength({ max: 1000 }).withMessage('El mensaje no puede superar los 1000 caracteres.'),
         body('coche_id')
             .optional()
             .custom(value => {
@@ -257,7 +261,9 @@ const RequestController = {
                 return res.status(400).send('Parámetros inválidos');
             }
 
-            await RequestModel.deleteExpense(expenseId);
+            // Se acota el borrado por requestId además del expenseId para evitar
+            // que un ID de pedido manipulado en la URL borre gastos de otro pedido (IDOR).
+            await RequestModel.deleteExpense(expenseId, requestId);
             logger.info(`Administrador '${req.session.adminUser}' eliminó gasto ID ${expenseId} del Pedido #${requestId}`);
             res.redirect(`/admin/requests/${requestId}`);
         } catch (err) {

@@ -1,6 +1,18 @@
-# Guía de Despliegue Seguro: Portal de Importación de Coches Alemania a España
+# Guía de Despliegue Seguro: Luxe Imports - Portal de Importación Premium de Vehículos
 
 Esta guía detalla la configuración y despliegue en producción de la aplicación web sobre un entorno **Ubuntu Server** en contenedores **LXC en Proxmox**, utilizando una arquitectura de red segmentada para máxima seguridad informática.
+
+## 0. Resumen de Medidas de Seguridad Implementadas
+
+- **CSRF**: token de 32 bytes por sesión, comparado en tiempo constante en cada `POST`.
+- **Contraseñas**: hash `scrypt` con verificación en tiempo constante (`crypto.timingSafeEqual`); nunca en texto plano.
+- **Sesiones**: cookies `httpOnly`, `secure` en producción, `sameSite=lax`, expiración a las 3 horas.
+- **CSP estricta**: sin `'unsafe-inline'` en `script-src` ni `style-src` (todo el JS/CSS vive en archivos externos versionados).
+- **SQL**: consultas 100% parametrizadas (`mysql2` con placeholders `?`), sin concatenación de strings.
+- **Subida de archivos**: nombre aleatorio, validación de extensión, MIME **y firma binaria real** del archivo (para detectar extensiones falsificadas).
+- **Rate limiting**: límites de intentos en `/admin/login` y en el formulario público `/importar`, además del límite general de Nginx.
+- **Arranque seguro**: la app se niega a iniciar en producción si falta `SESSION_SECRET`.
+- **Registro (logging)**: los errores técnicos van al log interno (`logs/error.log`); el usuario final nunca ve trazas de base de datos ni del sistema.
 
 ---
 
@@ -49,13 +61,13 @@ sudo mysql -u root -p
 ```
 Ejecute las siguientes sentencias SQL para crear la DB y el usuario con acceso exclusivo desde el LXC Web (`10.0.30.10`):
 ```sql
-CREATE DATABASE db_coches_matriz CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE db_luxe_imports CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Crear usuario con permisos limitados y enlazado a la IP del Servidor Web
-CREATE USER 'coches_user'@'10.0.30.10' IDENTIFIED BY 'UnPasswordAltamenteSeguro123$!';
+CREATE USER 'luxe_user'@'10.0.30.10' IDENTIFIED BY 'UnPasswordAltamenteSeguro123$!';
 
 -- Otorgar privilegios mínimos necesarios para la aplicación
-GRANT SELECT, INSERT, UPDATE, DELETE ON db_coches_matriz.* TO 'coches_user'@'10.0.30.10';
+GRANT SELECT, INSERT, UPDATE, DELETE ON db_luxe_imports.* TO 'luxe_user'@'10.0.30.10';
 
 FLUSH PRIVILEGES;
 EXIT;
@@ -64,7 +76,7 @@ EXIT;
 ### Cargar la Estructura Inicial (Schema)
 Copie el contenido del archivo `db/schema.sql` y ejecútelo para inicializar las tablas:
 ```bash
-mysql -u root -p db_coches_matriz < db/schema.sql
+mysql -u root -p db_luxe_imports < db/schema.sql
 ```
 
 ---
@@ -81,11 +93,11 @@ sudo apt install -y nodejs git build-essential
 ```
 
 ### Clonar la Aplicación
-Clone el código fuente en el directorio `/var/www/web-coches`:
+Clone el código fuente en el directorio `/var/www/luxe-imports`:
 ```bash
-sudo mkdir -p /var/www/web-coches
-sudo chown -R $USER:$USER /var/www/web-coches
-cd /var/www/web-coches
+sudo mkdir -p /var/www/luxe-imports
+sudo chown -R $USER:$USER /var/www/luxe-imports
+cd /var/www/luxe-imports
 # Copiar el código fuente del proyecto a este directorio
 ```
 
@@ -108,12 +120,13 @@ LOG_LEVEL=error
 
 DB_HOST=10.0.30.50
 DB_PORT=3306
-DB_USER=coches_user
+DB_USER=luxe_user
 DB_PASS=UnPasswordAltamenteSeguro123$!
-DB_NAME=web_coches_alemania
+DB_NAME=db_luxe_imports
 
 SESSION_SECRET=un_secreto_largo_y_aleatorio_generado_con_openssl_rand_hex_32
 ```
+> **Importante:** en `NODE_ENV=production` la aplicación se niega a arrancar si `SESSION_SECRET` no está definido (evita el uso accidental de un secreto por defecto embebido en el código). Genera uno real con `openssl rand -hex 32`.
 
 ### Crear el Usuario Administrador Inicial
 Ejecute el script de sembrado para crear las credenciales seguras de acceso al panel de control:
@@ -134,14 +147,14 @@ sudo npm install -g pm2
 ```
 Inicie la aplicación y configure el reinicio automático del sistema:
 ```bash
-pm2 start src/app.js --name "web-coches"
+pm2 start src/app.js --name "luxe-imports"
 pm2 save
 pm2 startup
 ```
 *(Copie y ejecute el comando en pantalla que genere `pm2 startup` para activar el servicio de systemd).*
 
 ### Opción B: Servicio Nativo de Systemd
-Cree un archivo de servicio en `/etc/systemd/system/web-coches.service`:
+Cree un archivo de servicio en `/etc/systemd/system/luxe-imports.service`:
 ```ini
 [Unit]
 Description=Servidor Web Importacion de Coches
@@ -150,7 +163,7 @@ After=network.target
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/var/www/web-coches
+WorkingDirectory=/var/www/luxe-imports
 ExecStart=/usr/bin/node src/app.js
 Restart=on-failure
 Environment=NODE_ENV=production
@@ -161,8 +174,8 @@ WantedBy=multi-user.target
 Habilite e inicie el servicio:
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable web-coches
-sudo systemctl start web-coches
+sudo systemctl enable luxe-imports
+sudo systemctl start luxe-imports
 ```
 
 ---
@@ -195,7 +208,7 @@ server {
     server_name tu-dominio-importacion.com www.tu-dominio-importacion.com;
 
     # Directorio Raíz de Archivos Estáticos (CSS, JS, Imágenes)
-    root /var/www/web-coches/public;
+    root /var/www/luxe-imports/public;
 
     # Certificados SSL (Generados por Let's Encrypt Certbot)
     ssl_certificate /etc/letsencrypt/live/tu-dominio-importacion.com/fullchain.pem;
@@ -213,7 +226,11 @@ server {
     add_header X-XSS-Protection "1; mode=block" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: /uploads/;" always;
+    # Nota: la aplicación Node ya envía su propia CSP estricta vía Helmet
+    # (ver src/app.js). Esta cabecera de Nginx debe mantenerse alineada con
+    # esa política -sin 'unsafe-inline'- para evitar configuraciones
+    # contradictorias entre capas.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:;" always;
     add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
 
     # Directorio de subida de imágenes - BLOQUEAR EJECUCIÓN DE SCRIPTS
@@ -226,7 +243,7 @@ server {
 
     # Servir archivos subidos (Imágenes) directamente por Nginx para mayor eficiencia
     location /uploads/ {
-        alias /var/www/web-coches/public/uploads/;
+        alias /var/www/luxe-imports/public/uploads/;
         expires 30d;
         add_header Cache-Control "public, no-transform";
     }
@@ -278,13 +295,13 @@ La aplicación no muestra fallos de base de datos a los usuarios en pantalla (mu
 
 - Ver logs detallados del servidor Node:
   ```bash
-  cat /var/www/web-coches/logs/error.log
+  cat /var/www/luxe-imports/logs/error.log
   ```
 - Ver logs de PM2:
   ```bash
-  pm2 logs web-coches
+  pm2 logs luxe-imports
   ```
 - Ver logs del servicio Systemd:
   ```bash
-  journalctl -u web-coches -n 100 --no-pager
+  journalctl -u luxe-imports -n 100 --no-pager
   ```

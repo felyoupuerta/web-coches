@@ -1,8 +1,28 @@
 <%- include('partials/header') %>
 
 <section class="hero-section text-center">
-    <h1>Encuentra tu próximo coche de Alemania</h1>
-    <p>Explora vehículos seleccionados y listos para importar. Gestionamos todo el transporte, ITV e matriculación.</p>
+    <span class="hero-eyebrow">Luxe Imports</span>
+    <h1>Tu próximo coche premium, directo desde Alemania</h1>
+    <p>Vehículos seleccionados y verificados, listos para importar. Gestionamos transporte certificado, ITV y matriculación de principio a fin.</p>
+</section>
+
+<section class="trust-bar">
+    <div class="trust-item">
+        <i data-lucide="shield-check"></i>
+        <span>Vehículos verificados</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="truck"></i>
+        <span>Transporte certificado</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="file-check-2"></i>
+        <span>Homologación y matriculación incluidas</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="lock"></i>
+        <span>Pago y datos protegidos</span>
+    </div>
 </section>
 
 <!-- Panel de Filtros -->
@@ -60,7 +80,7 @@
     <% } else { %>
         <div class="cars-grid">
             <% cars.forEach(car => { %>
-                <article class="car-card card">
+                <article class="car-card card reveal-on-scroll">
                     <div class="car-card-image">
                         <% if (car.imagen_principal) { %>
                             <img src="<%= car.imagen_principal %>" alt="<%= car.marca %> <%= car.modelo %>">

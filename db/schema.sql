@@ -1,9 +1,9 @@
 -- Script de Inicialización de Base de Datos para MariaDB
--- Proyecto: Importación de Coches Alemania -> España
+-- Proyecto: Luxe Imports - Importación premium de vehículos Alemania -> España
 -- Creado: 2026-07-20
 
-CREATE DATABASE IF NOT EXISTS `db_coches_matriz` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `db_coches_matriz`;
+CREATE DATABASE IF NOT EXISTS `db_luxe_imports` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `db_luxe_imports`;
 
 -- 1. Tabla de Usuarios Administradores
 CREATE TABLE IF NOT EXISTS `usuarios_admin` (

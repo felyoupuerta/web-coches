@@ -45,7 +45,7 @@
                                         <% if (usuario.usuario === adminUser) { %>
                                             <span class="text-muted">—</span>
                                         <% } else { %>
-                                            <form action="/admin/usuarios/<%= usuario.id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que desea eliminar al usuario «<%= usuario.usuario %>»? Esta acción es irreversible.');" style="display:inline;">
+                                            <form action="/admin/usuarios/<%= usuario.id %>/delete" method="POST" class="form-inline-block" data-confirm="¿Seguro que desea eliminar a este usuario? Esta acción es irreversible.">
                                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button type="submit" class="btn btn-danger btn-xs"><i data-lucide="trash"></i> Eliminar</button>
                                             </form>
