@@ -27,7 +27,7 @@
 
 <!-- Panel de Filtros -->
 <section class="filters-card card">
-    <form action="/" method="GET" class="filters-form">
+    <form action="/catalogo" method="GET" class="filters-form">
         <div class="form-group-grid">
             <div class="form-group">
                 <label for="marca"><i data-lucide="tag"></i> Marca</label>
@@ -63,7 +63,7 @@
         
         <div class="filters-actions">
             <button type="submit" class="btn btn-primary"><i data-lucide="sliders-horizontal"></i> Filtrar Catálogo</button>
-            <a href="/" class="btn btn-outline"><i data-lucide="rotate-ccw"></i> Limpiar</a>
+            <a href="/catalogo" class="btn btn-outline"><i data-lucide="rotate-ccw"></i> Limpiar</a>
         </div>
     </form>
 </section>
@@ -74,8 +74,8 @@
         <div class="no-results card text-center">
             <i data-lucide="alert-circle" size="48"></i>
             <h3>No se encontraron coches</h3>
-            <p>Prueba a ajustar los criterios de búsqueda o solicita un coche a la carta en el formulario de importación.</p>
-            <a href="/importar" class="btn btn-primary">Pedir Coche a la Carta</a>
+            <p>Prueba a ajustar los criterios de búsqueda o solicita un coche a la carta en nuestro wizard de búsqueda.</p>
+            <a href="/#wizard-busqueda" class="btn btn-primary">Pedir Coche a la Carta</a>
         </div>
     <% } else { %>
         <div class="cars-grid">

@@ -1,0 +1,324 @@
+<%- include('partials/header') %>
+
+<!-- ============ HERO ============ -->
+<section class="hero-section text-center" id="hero">
+    <span class="hero-eyebrow">Luxe Imports</span>
+    <h1>Importamos el coche de tus sueños desde Alemania con total garantía y transparencia</h1>
+    <p>Búsqueda a medida, inspección técnica in situ, transporte asegurado y matriculación llave en mano. Sin catálogo cerrado: tú eliges, nosotros lo traemos.</p>
+    <div class="hero-actions">
+        <a href="#wizard-busqueda" class="btn btn-primary btn-lg"><i data-lucide="search"></i> Solicitar Búsqueda Gratuita</a>
+        <a href="#calculadora" class="btn btn-outline btn-lg"><i data-lucide="calculator"></i> Calcular Coste de Importación</a>
+    </div>
+</section>
+
+<section class="trust-bar">
+    <div class="trust-item">
+        <i data-lucide="shield-check"></i>
+        <span>Contrato de mandato transparente</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="truck"></i>
+        <span>Transporte certificado y asegurado</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="file-check-2"></i>
+        <span>Homologación y matriculación incluidas</span>
+    </div>
+    <div class="trust-item">
+        <i data-lucide="lock"></i>
+        <span>Pago y datos protegidos</span>
+    </div>
+</section>
+
+<!-- ============ WIZARD: BÚSQUEDA A LA CARTA ============ -->
+<section class="wizard-section card" id="wizard-busqueda">
+    <% if (typeof searchSuccess !== 'undefined' && searchSuccess) { %>
+        <div class="success-card text-center">
+            <div class="success-icon"><i data-lucide="check-circle"></i></div>
+            <h2>¡Solicitud Recibida Correctamente!</h2>
+            <p>Hemos registrado los criterios de tu búsqueda. Un especialista de importación te enviará una propuesta personalizada en un plazo máximo de 24 horas laborables.</p>
+            <a href="/" class="btn btn-primary"><i data-lucide="arrow-left"></i> Volver al Inicio</a>
+        </div>
+    <% } else { %>
+        <div class="section-heading text-center">
+            <span class="section-eyebrow">Búsqueda a la Carta</span>
+            <h2>Cuéntanos qué coche buscas</h2>
+            <p class="text-muted">Rellena los criterios en menos de 2 minutos y te proponemos las mejores opciones disponibles en Alemania.</p>
+        </div>
+
+        <% if (errors && errors.length > 0) { %>
+            <div class="error-alert">
+                <h4>Corrija los siguientes errores:</h4>
+                <ul>
+                    <% errors.forEach(err => { %>
+                        <li><%= err.msg %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="/solicitar-busqueda" method="POST" class="secure-form wizard-form" id="wizard-form" data-has-errors="<%= (errors && errors.length > 0) ? 'true' : 'false' %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <ol class="wizard-progress" aria-hidden="true">
+                <li class="wizard-progress-step active"><span>1</span>Vehículo</li>
+                <li class="wizard-progress-step"><span>2</span>Motor y Uso</li>
+                <li class="wizard-progress-step"><span>3</span>Presupuesto</li>
+                <li class="wizard-progress-step"><span>4</span>Tus Datos</li>
+            </ol>
+
+            <fieldset class="wizard-step active" data-step="1">
+                <legend>¿Qué coche buscas?</legend>
+                <div class="form-group">
+                    <label for="marca_modelo">Marca y Modelo *</label>
+                    <input type="text" id="marca_modelo" name="marca_modelo" placeholder="Ej: Audi RS6, BMW M3, Mercedes Clase G..." value="<%= formData.marca_modelo || '' %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="ano_minimo">Año mínimo</label>
+                    <input type="number" id="ano_minimo" name="ano_minimo" placeholder="Ej: 2019" min="1950" max="2100" value="<%= formData.ano_minimo || '' %>">
+                </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="2">
+                <legend>Motor y kilometraje</legend>
+                <div class="form-group">
+                    <label for="combustible">Combustible</label>
+                    <select id="combustible" name="combustible">
+                        <option value="">Sin preferencia</option>
+                        <option value="Gasolina" <%= formData.combustible === 'Gasolina' ? 'selected' : '' %>>Gasolina</option>
+                        <option value="Diésel" <%= formData.combustible === 'Diésel' ? 'selected' : '' %>>Diésel</option>
+                        <option value="Híbrido" <%= formData.combustible === 'Híbrido' ? 'selected' : '' %>>Híbrido</option>
+                        <option value="Eléctrico" <%= formData.combustible === 'Eléctrico' ? 'selected' : '' %>>Eléctrico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="km_maximo">Kilometraje máximo</label>
+                    <input type="number" id="km_maximo" name="km_maximo" placeholder="Ej: 60000" min="0" max="2000000" value="<%= formData.km_maximo || '' %>">
+                </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="3">
+                <legend>Presupuesto y extras</legend>
+                <div class="form-group">
+                    <label for="presupuesto">Presupuesto estimado (€)</label>
+                    <input type="number" id="presupuesto" name="presupuesto" placeholder="Ej: 45000" min="0" max="10000000" value="<%= formData.presupuesto || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="extras">Extras imprescindibles</label>
+                    <textarea id="extras" name="extras" rows="4" placeholder="Ej: Techo panorámico, asientos de cuero, paquete M, cambio automático..."><%= formData.extras || '' %></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset class="wizard-step" data-step="4">
+                <legend>Tus datos de contacto</legend>
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre Completo *</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" placeholder="Ej: Juan Pérez" value="<%= formData.nombre_cliente || '' %>" required>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="telefono_cliente">Teléfono *</label>
+                        <input type="tel" id="telefono_cliente" name="telefono_cliente" placeholder="Ej: 600123456" value="<%= formData.telefono_cliente || '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_cliente">Correo Electrónico *</label>
+                        <input type="email" id="email_cliente" name="email_cliente" placeholder="Ej: juan@ejemplo.com" value="<%= formData.email_cliente || '' %>" required>
+                    </div>
+                </div>
+                <div class="form-security-disclaimer">
+                    <p><i data-lucide="shield-check"></i> <strong>Garantía de Privacidad:</strong> Tus datos se usan exclusivamente para preparar tu propuesta de búsqueda. No los compartimos con terceros.</p>
+                </div>
+            </fieldset>
+
+            <div class="wizard-nav">
+                <button type="button" class="btn btn-outline wizard-prev" data-wizard-prev>
+                    <i data-lucide="arrow-left"></i> Anterior
+                </button>
+                <button type="button" class="btn btn-primary wizard-next" data-wizard-next>
+                    Siguiente <i data-lucide="arrow-right"></i>
+                </button>
+                <button type="submit" class="btn btn-primary btn-block wizard-submit" data-wizard-submit>
+                    <i data-lucide="send"></i> Solicitar propuesta de búsqueda gratuita en 24h
+                </button>
+            </div>
+        </form>
+    <% } %>
+</section>
+
+<!-- ============ CALCULADORA DE IMPORTACIÓN ============ -->
+<section class="calculator-section" id="calculadora">
+    <div class="section-heading text-center">
+        <span class="section-eyebrow">Simulador de Costes</span>
+        <h2>Calcula el coste estimado de tu importación</h2>
+        <p class="text-muted">Introduce el precio de un coche visto en Mobile.de o AutoScout24 y obtén un desglose orientativo al instante.</p>
+    </div>
+
+    <div class="calculator-card card" id="cost-calculator">
+        <div class="calculator-inputs">
+            <div class="form-group">
+                <label for="calc-precio">Precio del vehículo en Alemania (€)</label>
+                <input type="number" id="calc-precio" min="0" step="100" placeholder="Ej: 38000">
+            </div>
+            <div class="form-group">
+                <label for="calc-co2">Categoría de emisiones (CO2)</label>
+                <select id="calc-co2">
+                    <option value="0">Hasta 120 g/km (Impuesto 0%)</option>
+                    <option value="4.75">121 - 159 g/km (Impuesto 4,75%)</option>
+                    <option value="9.75">160 - 200 g/km (Impuesto 9,75%)</option>
+                    <option value="14.75">Más de 200 g/km (Impuesto 14,75%)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="calculator-breakdown">
+            <div class="breakdown-row">
+                <span>Precio del vehículo en origen</span>
+                <strong id="calc-out-precio">0 €</strong>
+            </div>
+            <div class="breakdown-row">
+                <span>Transporte asegurado en camión</span>
+                <strong id="calc-out-transporte">0 €</strong>
+            </div>
+            <div class="breakdown-row">
+                <span>Gestión ITV, homologación y matriculación</span>
+                <strong id="calc-out-gestion">0 €</strong>
+            </div>
+            <div class="breakdown-row">
+                <span>Impuesto de Matriculación (España)</span>
+                <strong id="calc-out-impuesto">0 €</strong>
+            </div>
+            <div class="breakdown-row">
+                <span>Honorarios de gestión Luxe Imports</span>
+                <strong id="calc-out-honorarios">0 €</strong>
+            </div>
+            <div class="breakdown-row breakdown-total">
+                <span>Total estimado llave en mano</span>
+                <strong id="calc-out-total">0 €</strong>
+            </div>
+        </div>
+
+        <p class="calculator-disclaimer"><i data-lucide="info"></i> Cálculo orientativo no vinculante. El presupuesto final se confirma tras la inspección técnica del vehículo.</p>
+
+        <div class="calculator-actions">
+            <a href="#" id="calc-whatsapp-btn" class="btn btn-outline" target="_blank" rel="noopener">
+                <i data-lucide="message-circle"></i> Enviar cálculo por WhatsApp
+            </a>
+            <button type="button" id="calc-save-btn" class="btn btn-primary">
+                <i data-lucide="bookmark-plus"></i> Guardar y solicitar propuesta
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ============ PROCESO PASO A PASO ============ -->
+<section class="process-section" id="proceso">
+    <div class="section-heading text-center">
+        <span class="section-eyebrow">Cómo Funciona</span>
+        <h2>Tu importación en 5 pasos</h2>
+    </div>
+
+    <div class="process-timeline">
+        <div class="process-step card">
+            <span class="process-number">1</span>
+            <i data-lucide="search-check"></i>
+            <h3>Búsqueda y Asesoramiento</h3>
+            <p>Analizamos tus criterios y rastreamos el mercado alemán (Mobile.de, AutoScout24 y red de concesionarios) para encontrar las mejores unidades disponibles.</p>
+        </div>
+        <div class="process-step card">
+            <span class="process-number">2</span>
+            <i data-lucide="clipboard-check"></i>
+            <h3>Inspección Técnica In Situ</h3>
+            <p>Revisamos físicamente el vehículo en Alemania: número de bastidor/VIN, historial de la centralita, mantenimiento y estado real antes de comprometer tu dinero.</p>
+        </div>
+        <div class="process-step card">
+            <span class="process-number">3</span>
+            <i data-lucide="file-signature"></i>
+            <h3>Contratación y Garantía de Pago</h3>
+            <p>Formalizamos un Contrato de Mandato de Compra: actuamos en tu nombre y tu dinero está protegido durante toda la operación.</p>
+        </div>
+        <div class="process-step card">
+            <span class="process-number">4</span>
+            <i data-lucide="truck"></i>
+            <h3>Transporte y Homologación</h3>
+            <p>Transporte asegurado hasta España, gestión completa de la ITV, homologación y placas españolas.</p>
+        </div>
+        <div class="process-step card">
+            <span class="process-number">5</span>
+            <i data-lucide="key-round"></i>
+            <h3>Entrega Llave en Mano</h3>
+            <p>Recibes tu vehículo totalmente matriculado y listo para circular, sin gestiones adicionales por tu parte.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ SOBRE NOSOTROS Y CONFIANZA ============ -->
+<section class="about-section" id="nosotros">
+    <div class="about-grid">
+        <div class="about-media">
+            <div class="image-placeholder about-media-placeholder">
+                <i data-lucide="video"></i>
+                <span>Fotos y vídeo del equipo inspeccionando vehículos en Alemania</span>
+            </div>
+        </div>
+        <div class="about-content">
+            <span class="section-eyebrow">Sobre Nosotros</span>
+            <h2>Un equipo especializado, sobre el terreno</h2>
+            <p>No revendemos coches de un catálogo cerrado: viajamos a Alemania, inspeccionamos cada vehículo en persona y gestionamos toda la operación de compra, transporte y matriculación en tu nombre.</p>
+
+            <div class="guarantees-grid">
+                <div class="guarantee-item">
+                    <i data-lucide="file-signature"></i>
+                    <div>
+                        <h4>Contrato de Mandato Transparente</h4>
+                        <p>Firmas un mandato de compra donde actuamos únicamente en tu interés, con todas las condiciones por escrito.</p>
+                    </div>
+                </div>
+                <div class="guarantee-item">
+                    <i data-lucide="gauge"></i>
+                    <div>
+                        <h4>Verificación de Kilometraje</h4>
+                        <p>Comprobamos el historial y la centralita del vehículo para descartar manipulaciones del cuentakilómetros.</p>
+                    </div>
+                </div>
+                <div class="guarantee-item">
+                    <i data-lucide="scale"></i>
+                    <div>
+                        <h4>Protección Legal del Cliente</h4>
+                        <p>Tu pago queda vinculado al cumplimiento de las condiciones pactadas antes de formalizar la compra.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq-section" id="faq">
+    <div class="section-heading text-center">
+        <span class="section-eyebrow">Preguntas Frecuentes</span>
+        <h2>Resolvemos tus dudas</h2>
+    </div>
+
+    <div class="faq-accordion">
+        <details class="faq-item">
+            <summary>¿Cuánto tarda el proceso completo?</summary>
+            <p>El proceso completo, desde que confirmamos el vehículo hasta que lo recibes matriculado en España, suele tardar entre 10 y 15 días laborables, dependiendo de la disponibilidad de ITV y del transporte.</p>
+        </details>
+        <details class="faq-item">
+            <summary>¿Cómo funciona la garantía mecánica y la protección de mi dinero?</summary>
+            <p>Antes de comprar, inspeccionamos el vehículo in situ (bastidor, centralita, mantenimiento). La compra se formaliza mediante un Contrato de Mandato de Compra, de forma que tu dinero solo se transfiere cuando el vehículo cumple las condiciones pactadas.</p>
+        </details>
+        <details class="faq-item">
+            <summary>¿Puedo financiar la operación?</summary>
+            <p>Sí. Podemos ponerte en contacto con entidades financieras colaboradoras para estudiar tu operación una vez tengamos el presupuesto final del vehículo seleccionado.</p>
+        </details>
+        <details class="faq-item">
+            <summary>¿Qué pasa si el coche no pasa la revisión técnica en Alemania?</summary>
+            <p>Si el vehículo no supera nuestra inspección o no cumple lo pactado, no se formaliza la compra y buscamos una alternativa sin coste adicional para ti.</p>
+        </details>
+    </div>
+</section>
+
+<script src="/js/landing.js" defer></script>
+
+<%- include('partials/footer') %>

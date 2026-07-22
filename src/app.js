@@ -28,6 +28,8 @@ const CarController = require('./controllers/carController');
 const RequestController = require('./controllers/requestController');
 const AuthController = require('./controllers/authController');
 const AccountingController = require('./controllers/accountingController');
+const HomeController = require('./controllers/homeController');
+const SearchRequestController = require('./controllers/searchRequestController');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
@@ -181,13 +183,19 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', service: 'luxe-imports' });
 });
 
+// Ruta Pública de Inicio (Landing "Importación a la Carta")
+app.get('/', HomeController.showHome);
+
 // Rutas Públicas de Catálogo de Coches
-app.get('/', CarController.listCars);
+app.get('/catalogo', CarController.listCars);
 app.get('/coches/:id', CarController.showCarDetails);
 
 // Rutas Públicas de Solicitudes (Pedidos)
 app.get('/importar', RequestController.showRequestForm);
 app.post('/importar', formLimiter, csrfCheck, RequestController.validateRequest, RequestController.submitRequest);
+
+// Ruta Pública del Wizard "Búsqueda a la Carta" (landing)
+app.post('/solicitar-busqueda', formLimiter, csrfCheck, SearchRequestController.validateSearchRequest, SearchRequestController.submitSearchRequest);
 
 // Rutas de Autenticación Admin
 app.get('/admin/login', AuthController.showLogin);
@@ -219,6 +227,10 @@ app.get('/admin/cars', AuthController.requireAdmin, CarController.showAdminCars)
 app.post('/admin/cars', AuthController.requireAdmin, CarController.uploadMiddleware, csrfCheck, CarController.validateCar, CarController.createCar);
 
 app.post('/admin/cars/:id/delete', AuthController.requireAdmin, csrfCheck, CarController.deleteCar);
+
+// Rutas de Gestión de Solicitudes de Búsqueda "A la Carta" (leads del wizard)
+app.get('/admin/busquedas', AuthController.requireAdmin, SearchRequestController.showAdminList);
+app.post('/admin/busquedas/:id/status', AuthController.requireAdmin, csrfCheck, SearchRequestController.updateStatus);
 
 // Rutas de Gestión de Usuarios Administradores
 app.get('/admin/usuarios', AuthController.requireAdmin, AuthController.showUsersPage);

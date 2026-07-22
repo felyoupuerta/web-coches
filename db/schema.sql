@@ -97,6 +97,22 @@ CREATE TABLE IF NOT EXISTS `ingresos_generales` (
     `creado_en` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- 8. Tabla de Solicitudes de Búsqueda "A la Carta" (leads del wizard de la landing)
+CREATE TABLE IF NOT EXISTS `solicitudes_busqueda` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `marca_modelo` VARCHAR(150) NOT NULL,
+    `ano_minimo` INT DEFAULT NULL,
+    `combustible` VARCHAR(30) DEFAULT NULL,
+    `km_maximo` INT DEFAULT NULL,
+    `presupuesto` DECIMAL(12, 2) DEFAULT NULL,
+    `extras` TEXT DEFAULT NULL,
+    `nombre_cliente` VARCHAR(100) NOT NULL,
+    `telefono_cliente` VARCHAR(30) NOT NULL,
+    `email_cliente` VARCHAR(100) NOT NULL,
+    `estado` VARCHAR(30) NOT NULL DEFAULT 'pendiente', -- 'pendiente', 'contactado', 'descartado', 'convertido'
+    `creado_en` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- Índices de Optimización de Búsqueda
 CREATE INDEX `idx_coches_marca_modelo` ON `coches` (`marca`, `modelo`);
 CREATE INDEX `idx_coches_precio` ON `coches` (`precio`);
@@ -109,3 +125,5 @@ CREATE INDEX `idx_gastos_generales_fecha` ON `gastos_generales` (`fecha`);
 CREATE INDEX `idx_gastos_generales_categoria` ON `gastos_generales` (`categoria`);
 CREATE INDEX `idx_ingresos_generales_fecha` ON `ingresos_generales` (`fecha`);
 CREATE INDEX `idx_ingresos_generales_tipo` ON `ingresos_generales` (`tipo`);
+CREATE INDEX `idx_busqueda_estado` ON `solicitudes_busqueda` (`estado`);
+CREATE INDEX `idx_busqueda_creado_en` ON `solicitudes_busqueda` (`creado_en`);

@@ -1,0 +1,86 @@
+<%- include('../partials/header') %>
+
+<div class="admin-header">
+    <div>
+        <h1>Búsquedas a la Carta</h1>
+        <p class="text-muted">Leads recibidos desde el wizard de la landing (criterios de búsqueda deseados por el cliente)</p>
+    </div>
+    <div class="admin-actions">
+        <a href="/admin/dashboard" class="btn btn-outline"><i data-lucide="arrow-left"></i> Volver al Dashboard</a>
+    </div>
+</div>
+
+<section class="requests-section card">
+    <div class="card-header">
+        <h3><i data-lucide="inbox"></i> Solicitudes de Búsqueda Recibidas</h3>
+    </div>
+
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Vehículo Deseado</th>
+                    <th>Criterios</th>
+                    <th>Presupuesto</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (solicitudes.length === 0) { %>
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Todavía no se han recibido búsquedas a la carta.</td>
+                    </tr>
+                <% } else { %>
+                    <% solicitudes.forEach(s => { %>
+                        <tr>
+                            <td><strong>#<%= s.id %></strong></td>
+                            <td>
+                                <div><strong><%= s.nombre_cliente %></strong></div>
+                                <div class="table-subtext">
+                                    <a href="mailto:<%= s.email_cliente %>"><%= s.email_cliente %></a> |
+                                    <a href="tel:<%= s.telefono_cliente %>"><%= s.telefono_cliente %></a>
+                                </div>
+                            </td>
+                            <td>
+                                <strong><%= s.marca_modelo %></strong>
+                                <% if (s.ano_minimo) { %>
+                                    <div class="table-subtext">Desde <%= s.ano_minimo %></div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="table-subtext">
+                                    <% if (s.combustible) { %><%= s.combustible %><% } else { %>Cualquier combustible<% } %>
+                                    <% if (s.km_maximo) { %> · Máx. <%= parseInt(s.km_maximo, 10).toLocaleString('es-ES') %> km<% } %>
+                                </div>
+                                <% if (s.extras) { %>
+                                    <div class="table-subtext"><%= s.extras.substring(0, 60) %><%= s.extras.length > 60 ? '...' : '' %></div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <%= s.presupuesto ? parseFloat(s.presupuesto).toLocaleString('es-ES') + ' €' : '-' %>
+                            </td>
+                            <td class="table-subtext"><%= new Date(s.creado_en).toLocaleDateString('es-ES') %></td>
+                            <td>
+                                <form action="/admin/busquedas/<%= s.id %>/status" method="POST" class="status-form-inline">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <select name="estado" class="form-select-inline" data-autosubmit>
+                                        <option value="pendiente" <%= s.estado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+                                        <option value="contactado" <%= s.estado === 'contactado' ? 'selected' : '' %>>Contactado</option>
+                                        <option value="convertido" <%= s.estado === 'convertido' ? 'selected' : '' %>>Convertido</option>
+                                        <option value="descartado" <%= s.estado === 'descartado' ? 'selected' : '' %>>Descartado</option>
+                                    </select>
+                                    <noscript><button type="submit" class="btn btn-sm btn-outline">Guardar</button></noscript>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

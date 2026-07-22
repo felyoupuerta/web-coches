@@ -1630,7 +1630,8 @@ textarea:focus {
     }
 
     .nav-menu.active {
-        max-height: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
         opacity: 1;
         padding: 1.5rem;
     }
@@ -1641,5 +1642,527 @@ textarea:focus {
     
     .hero-section h1 {
         font-size: 2.2rem;
+    }
+}
+
+/* ============================================================
+   LANDING "IMPORTACIÓN A LA CARTA"
+   ============================================================ */
+
+/* --- Hero: CTAs --- */
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.75rem;
+}
+
+/* --- Cabeceras de sección reutilizables --- */
+.section-heading {
+    max-width: 720px;
+    margin: 0 auto 2.5rem;
+}
+
+.section-eyebrow {
+    display: inline-block;
+    font-family: var(--font-headings);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+}
+
+.section-heading h2 {
+    margin-bottom: 0.6rem;
+}
+
+/* --- KPI enlazable (dashboard) --- */
+.kpi-card-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* --- WIZARD "BÚSQUEDA A LA CARTA" --- */
+.wizard-section {
+    max-width: 780px;
+    margin: 0 auto 3.5rem;
+    padding: 2.5rem;
+    scroll-margin-top: 90px;
+}
+
+.wizard-progress {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    margin: 0 0 2.25rem;
+    padding: 0;
+    gap: 0.5rem;
+}
+
+.wizard-progress-step {
+    flex: 1;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    position: relative;
+}
+
+.wizard-progress-step span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 0.5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-family: var(--font-headings);
+    transition: var(--transition-normal);
+}
+
+.wizard-progress-step.active span {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #0b0f19;
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.wizard-progress-step.completed span {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.wizard-progress-step.active {
+    color: var(--text-main);
+}
+
+.wizard-step {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+}
+
+.wizard-step legend {
+    font-family: var(--font-headings);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    padding: 0;
+}
+
+/* Con JS activo, sólo se muestra el paso actual */
+.wizard-ready .wizard-step {
+    display: none;
+}
+
+.wizard-ready .wizard-step.active {
+    display: block;
+    animation: wizard-fade-in 0.25s ease;
+}
+
+@keyframes wizard-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wizard-nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Por defecto (sin JS) sólo se muestra el botón de envío final */
+.wizard-next,
+.wizard-prev {
+    display: none;
+}
+
+.wizard-nav .wizard-next {
+    margin-left: auto;
+}
+
+.wizard-submit {
+    width: 100%;
+}
+
+/* --- CALCULADORA DE IMPORTACIÓN --- */
+.calculator-section {
+    max-width: 900px;
+    margin: 0 auto 3.5rem;
+    scroll-margin-top: 90px;
+}
+
+.calculator-card {
+    padding: 2.5rem;
+}
+
+.calculator-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.calculator-breakdown {
+    border-top: 1px solid var(--border-color);
+    margin-top: 1rem;
+    padding-top: 1.25rem;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.breakdown-row strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.breakdown-total {
+    border-bottom: none;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 1.1rem;
+}
+
+.breakdown-total span {
+    font-family: var(--font-headings);
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.breakdown-total strong {
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.calculator-disclaimer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 1.25rem 0 0;
+}
+
+.calculator-disclaimer i {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+.calculator-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.calculator-actions .btn {
+    flex: 1;
+    min-width: 220px;
+}
+
+/* --- PROCESO PASO A PASO --- */
+.process-section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 90px;
+}
+
+.process-timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.5rem;
+}
+
+.process-step {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.process-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-glow);
+    color: var(--primary);
+    font-family: var(--font-headings);
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.process-step > i {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 1rem;
+    color: var(--primary);
+}
+
+.process-step h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+}
+
+.process-step p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+/* --- SOBRE NOSOTROS Y CONFIANZA --- */
+.about-section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 90px;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.about-media-placeholder {
+    min-height: 360px;
+    border: 1px dashed var(--border-color);
+    border-radius: 16px;
+    background-color: var(--bg-card);
+    text-align: center;
+    padding: 2rem;
+}
+
+.about-media-placeholder i {
+    width: 40px;
+    height: 40px;
+}
+
+.about-content h2 {
+    margin-bottom: 1rem;
+}
+
+.about-content > p {
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+}
+
+.guarantees-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.guarantee-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.guarantee-item i {
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+.guarantee-item h4 {
+    margin-bottom: 0.3rem;
+    font-size: 0.98rem;
+}
+
+.guarantee-item p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* --- FAQ (ACORDEÓN NATIVO) --- */
+.faq-section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 90px;
+}
+
+.faq-accordion {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.faq-item {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.25rem 1.5rem;
+    transition: var(--transition-fast);
+}
+
+.faq-item[open] {
+    border-color: var(--border-hover);
+}
+
+.faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1.1rem 0;
+    font-family: var(--font-headings);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: '+';
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--primary);
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.faq-item[open] summary::after {
+    transform: rotate(45deg);
+}
+
+.faq-item p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    padding: 0 0 1.25rem;
+    margin: 0;
+}
+
+/* --- CANALES DE CONTACTO FLOTANTES --- */
+.fab-group {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 900;
+}
+
+.fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: #ffffff;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition-normal);
+}
+
+.fab:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+.fab i {
+    width: 22px;
+    height: 22px;
+}
+
+.fab-whatsapp {
+    width: 58px;
+    height: 58px;
+    background-color: #25d366;
+}
+
+.fab-whatsapp i {
+    width: 26px;
+    height: 26px;
+}
+
+.fab-call {
+    background-color: var(--info);
+}
+
+.fab-schedule {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+/* --- RESPONSIVIDAD: SECCIONES DE LA LANDING --- */
+@media (max-width: 900px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-media-placeholder {
+        min-height: 240px;
+    }
+}
+
+@media (max-width: 640px) {
+    .wizard-section,
+    .calculator-card {
+        padding: 1.5rem;
+    }
+
+    .calculator-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .wizard-progress-step span {
+        width: 26px;
+        height: 26px;
+        font-size: 0.85rem;
+    }
+
+    .wizard-progress-step {
+        font-size: 0;
+    }
+
+    .calculator-actions .btn {
+        min-width: 100%;
+    }
+
+    .fab-group {
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+    .fab-whatsapp {
+        width: 52px;
+        height: 52px;
+    }
+
+    .fab {
+        width: 44px;
+        height: 44px;
     }
 }

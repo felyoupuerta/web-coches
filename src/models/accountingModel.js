@@ -53,6 +53,7 @@ const AccountingModel = {
                     (SELECT COUNT(*) FROM coches WHERE estado = 'reservado')  AS reservados,
                     (SELECT COUNT(*) FROM coches WHERE estado = 'vendido')    AS vendidos,
                     (SELECT COUNT(*) FROM solicitudes_importacion WHERE estado = 'pendiente') AS solicitudes_pendientes,
+                    (SELECT COUNT(*) FROM solicitudes_busqueda WHERE estado = 'pendiente') AS busquedas_pendientes,
                     (SELECT COUNT(*) FROM coches) AS total_vehiculos
             `;
             const [rows] = await db.execute(query);

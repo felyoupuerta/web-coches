@@ -12,8 +12,9 @@
             <div class="footer-links">
                 <h4>Navegación</h4>
                 <ul>
-                    <li><a href="/"><i data-lucide="chevron-right"></i> Catálogo de Vehículos</a></li>
-                    <li><a href="/importar"><i data-lucide="chevron-right"></i> Pedir coche a la carta</a></li>
+                    <li><a href="/#wizard-busqueda"><i data-lucide="chevron-right"></i> Búsqueda a la Carta</a></li>
+                    <li><a href="/#calculadora"><i data-lucide="chevron-right"></i> Calculadora de Costes</a></li>
+                    <li><a href="/catalogo"><i data-lucide="chevron-right"></i> Vehículos Disponibles</a></li>
                     <li><a href="/admin/login"><i data-lucide="chevron-right"></i> Acceso Personal</a></li>
                 </ul>
             </div>
@@ -29,6 +30,8 @@
             <p>&copy; <%= new Date().getFullYear() %> Luxe Imports. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <%- include('floating-contact') %>
 
     <script src="/js/main.js" defer></script>
 </body>
