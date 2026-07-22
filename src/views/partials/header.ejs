@@ -29,15 +29,8 @@
             </a>
 
             <nav class="nav-menu">
-                <!-- 
-                <a href="/" class="nav-link"><i data-lucide="home"></i> Inicio</a>
-                <a href="/#wizard-busqueda" class="nav-link"><i data-lucide="search"></i> Búsqueda a la Carta</a>
-                <a href="/#calculadora" class="nav-link"><i data-lucide="calculator"></i> Calculadora</a>
-                <a href="/#proceso" class="nav-link"><i data-lucide="list-checks"></i> Cómo Funciona</a>
-                <a href="/catalogo" class="nav-link"><i data-lucide="car"></i> Vehículos Disponibles</a>
-                <a href="/#faq" class="nav-link"><i data-lucide="help-circle"></i> FAQ</a>
-                 -->
                 <% if (adminUser) { %>
+                    <!-- Menú exclusivo para Administradores -->
                     <a href="/admin/dashboard" class="nav-link nav-admin"><i data-lucide="layout-dashboard"></i> Panel Admin</a>
                     <a href="/admin/contabilidad" class="nav-link nav-admin"><i data-lucide="calculator"></i> Contabilidad</a>
                     <a href="/admin/cars" class="nav-link nav-admin"><i data-lucide="plus-circle"></i> Catálogo Admin</a>
@@ -45,13 +38,14 @@
                     <a href="/admin/usuarios" class="nav-link nav-admin"><i data-lucide="users"></i> Usuarios</a>
                     <a href="/admin/logout" class="nav-link logout-btn"><i data-lucide="log-out"></i> Salir (<%= adminUser %>)</a>
                 <% } else { %>
-                    <a href="/admin/login" class="nav-link login-link"><i data-lucide="lock"></i> Acceder</a>
+                    <!-- Menú público para Clientes / Visitantes -->
                     <a href="/" class="nav-link"><i data-lucide="home"></i> Inicio</a>
                     <a href="/#wizard-busqueda" class="nav-link"><i data-lucide="search"></i> Búsqueda a la Carta</a>
                     <a href="/#calculadora" class="nav-link"><i data-lucide="calculator"></i> Calculadora</a>
                     <a href="/#proceso" class="nav-link"><i data-lucide="list-checks"></i> Cómo Funciona</a>
                     <a href="/catalogo" class="nav-link"><i data-lucide="car"></i> Vehículos Disponibles</a>
                     <a href="/#faq" class="nav-link"><i data-lucide="help-circle"></i> FAQ</a>
+                    <a href="/admin/login" class="nav-link login-link"><i data-lucide="lock"></i> Acceder</a>
                 <% } %>
             </nav>
             <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
