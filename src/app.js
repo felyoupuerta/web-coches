@@ -188,6 +188,22 @@ const globalLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false
 });
+
+// Límite propio para la importación de fichas por URL: cada petición hace de
+// proxy hacia un sitio externo (potencial vector de abuso/SSRF si se
+// permitiera sin control), así que se limita aparte y de forma más estricta
+// que el resto del panel admin.
+const importUrlLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Has hecho demasiadas importaciones seguidas. Espera unos minutos e inténtalo de nuevo.',
+    handler: (req, res, next, options) => {
+        logger.warn(`Rate limit de importación de coches superado desde IP: ${req.ip}`);
+        res.status(429).json({ ok: false, error: options.message });
+    }
+});
 app.use(globalLimiter);
 
 // --- DECLARACIÓN DE RUTAS ---
@@ -238,6 +254,9 @@ app.post('/admin/requests/:requestId/expenses/:expenseId/delete', AuthController
 
 // Rutas de Administración del Catálogo de Coches
 app.get('/admin/cars', AuthController.requireAdmin, CarController.showAdminCars);
+
+// Importación de ficha desde URL externa (autorelleno del formulario de alta)
+app.post('/admin/cars/importar-url', AuthController.requireAdmin, importUrlLimiter, csrfCheck, CarController.validateImportUrl, CarController.importFromUrl);
 
 // Importante: uploadMiddleware va antes de csrfCheck para procesar multipart/form-data
 app.post('/admin/cars', AuthController.requireAdmin, CarController.uploadMiddleware, csrfCheck, CarController.validateCar, CarController.createCar);

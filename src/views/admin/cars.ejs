@@ -59,12 +59,29 @@
 
     <!-- Columna Derecha: Formulario para añadir nuevo -->
     <div class="admin-col">
+        <div class="card" id="import-url-card">
+            <h3><i data-lucide="link"></i> Importar Ficha desde URL</h3>
+            <p class="text-muted">Pega el enlace de un anuncio de AutoScout24 o mobile.de para autorellenar los campos y las fotos. Revisa siempre los datos antes de registrar el vehículo.</p>
+
+            <div class="form-group-row">
+                <div class="form-group" style="flex-grow: 1;">
+                    <label for="import-url-input">URL del anuncio</label>
+                    <input type="url" id="import-url-input" placeholder="https://www.autoscout24.de/angebote/...">
+                </div>
+            </div>
+            <button type="button" id="import-url-btn" class="btn btn-outline btn-block">
+                <i data-lucide="download"></i> Importar Datos
+            </button>
+            <p id="import-url-status" class="text-muted" role="status" style="margin-top: 0.75rem;"></p>
+        </div>
+
         <div class="card">
             <h3><i data-lucide="plus-circle"></i> Registrar Nuevo Vehículo</h3>
-            
+
             <!-- Pasamos _csrf en la URL ya que con multipart/form-data express-body-parser no lee req.body antes de multer -->
-            <form action="/admin/cars?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="secure-form">
-                
+            <form action="/admin/cars?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="secure-form" id="car-form">
+                <input type="hidden" name="imagenes_importadas" id="imagenes-importadas-input" value="">
+
                 <div class="form-group-row">
                     <div class="form-group">
                         <label for="marca">Marca *</label>
@@ -129,8 +146,13 @@
 
                 <div class="form-group">
                     <label for="imagenes">Imágenes del Vehículo (Soporta múltiples) *</label>
-                    <input type="file" id="imagenes" name="imagenes" accept="image/png, image/jpeg, image/jpg, image/webp" multiple required>
-                    <small class="text-muted">Formatos permitidos: PNG, JPG, JPEG, WEBP. Máximo 5MB por archivo. Máximo 10 archivos.</small>
+                    <input type="file" id="imagenes" name="imagenes" accept="image/png, image/jpeg, image/jpg, image/webp" multiple>
+                    <small class="text-muted">Formatos permitidos: PNG, JPG, JPEG, WEBP. Máximo 5MB por archivo. Máximo 10 archivos. También puedes usar solo las fotos importadas desde la URL.</small>
+                </div>
+
+                <div class="form-group" id="imported-images-preview" hidden>
+                    <label>Fotos Importadas</label>
+                    <div class="thumbnails-grid" id="imported-images-grid"></div>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block"><i data-lucide="plus"></i> Registrar en Catálogo</button>
@@ -139,4 +161,5 @@
     </div>
 </div>
 
+<script src="/js/admin-car-import.js" defer></script>
 <%- include('../partials/footer') %>

@@ -329,6 +329,7 @@ input[type="number"],
 input[type="tel"],
 input[type="email"],
 input[type="password"],
+input[type="url"],
 select,
 textarea {
     width: 100%;
@@ -2346,3 +2347,12 @@ textarea:focus {
         width: calc(100vw - 2rem);
     }
 } 
+
+/* --- Importación de fichas de vehículo desde URL (panel admin) --- */
+.import-status-error {
+    color: var(--danger);
+}
+
+.import-status-success {
+    color: var(--success);
+}

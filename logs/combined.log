@@ -29,3 +29,73 @@
 {"level":"info","message":"Administrador 'manu' añadió gasto 'grúa' de 600€ al Pedido #2","timestamp":"2026-07-20 18:26:40"}
 {"level":"info","message":"Administrador 'manu' cambió estado de Pedido #2 a 'pendiente'","timestamp":"2026-07-20 18:27:02"}
 {"level":"info","message":"Administrador 'manu' cerró sesión.","timestamp":"2026-07-20 18:28:03"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 09:25:13"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 09:25:13"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 09:25:27"}
+{"level":"info","message":"Administrador 'felipe' cambió estado de Pedido #1 a 'completado'","timestamp":"2026-07-22 09:25:54"}
+{"level":"info","message":"Administrador 'felipe' cambió estado de Pedido #2 a 'completado'","timestamp":"2026-07-22 09:26:38"}
+{"level":"info","message":"Administrador 'felipe' cerró sesión.","timestamp":"2026-07-22 09:26:53"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 09:26:58"}
+{"level":"info","message":"Administrador 'felipe' eliminó usuario admin ID: 3","timestamp":"2026-07-22 09:27:15"}
+{"level":"info","message":"Administrador 'felipe' creó nuevo usuario admin: 'esilva'","timestamp":"2026-07-22 09:27:45"}
+{"level":"info","message":"Administrador 'felipe' cambió estado de Pedido #2 a 'rechazado'","timestamp":"2026-07-22 09:46:57"}
+{"level":"info","message":"Administrador 'felipe' eliminó gasto ID 3 del Pedido #2","timestamp":"2026-07-22 09:47:02"}
+{"level":"info","message":"Administrador 'felipe' eliminó gasto ID 2 del Pedido #2","timestamp":"2026-07-22 09:47:05"}
+{"level":"info","message":"Administrador 'felipe' cambió estado de Pedido #1 a 'rechazado'","timestamp":"2026-07-22 09:47:19"}
+{"level":"info","message":"Administrador 'felipe' actualizó precio de venta del Pedido #1 a 0€","timestamp":"2026-07-22 09:47:24"}
+{"level":"info","message":"Administrador 'felipe' eliminó gasto ID 1 del Pedido #1","timestamp":"2026-07-22 09:47:28"}
+{"level":"info","message":"Administrador 'felipe' actualizó precio de venta del Pedido #2 a 0€","timestamp":"2026-07-22 09:47:35"}
+{"level":"info","message":"Administrador 'felipe' actualizó precio de venta del Pedido #2 a 0.00€","timestamp":"2026-07-22 09:47:40"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 10:47:17"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 10:47:17"}
+{"level":"info","message":"Nueva solicitud de búsqueda a la carta recibida de Usuario De Pruebas (usuariodepruiebas@gmail.com)","timestamp":"2026-07-22 10:48:53"}
+{"level":"info","message":"Administrador 'esilva' inició sesión exitosamente.","timestamp":"2026-07-22 10:49:21"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 10:49:40"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 10:53:30"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 10:53:30"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 10:54:19"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 10:54:19"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 10:59:53"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 10:59:53"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:00:07"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:03:35"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:03:35"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:03:46"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:08:18"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:08:18"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:08:26"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:12:33"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:12:33"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:12:42"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:12:54"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:12:54"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:13:00"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:13:00"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:13:06"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 11:28:34"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 11:28:34"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:28:56"}
+{"level":"info","message":"Administrador 'felipe' eliminó el coche ID: 1","timestamp":"2026-07-22 11:30:12"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 11:35:14"}
+{"level":"info","message":"Administrador 'felipe' creó nuevo usuario admin: 'didrik'","timestamp":"2026-07-22 11:36:39"}
+{"level":"info","message":"Administrador 'felipe' eliminó usuario admin ID: 2","timestamp":"2026-07-22 11:36:42"}
+{"level":"info","message":"Administrador 'felipe' cerró sesión.","timestamp":"2026-07-22 12:01:35"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:01:11"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:01:11"}
+{"level":"info","message":"Administrador 'felipe' inició sesión exitosamente.","timestamp":"2026-07-22 15:01:56"}
+{"level":"info","message":"Administrador 'felipe' cerró sesión.","timestamp":"2026-07-22 15:02:14"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:21:04"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:21:04"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:30:33"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:30:33"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:33:03"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:33:03"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:35:16"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:35:16"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 15:37:17"}
+{"level":"info","message":"Conexión exitosa a la base de datos MariaDB.","timestamp":"2026-07-22 15:37:18"}
+{"error":{},"level":"error","message":"Error en chatbot: This operation was aborted","timestamp":"2026-07-22 15:37:35"}
+{"error":{},"level":"error","message":"Error en chatbot: This operation was aborted","timestamp":"2026-07-22 16:11:55"}
+{"error":{},"level":"error","message":"Error en chatbot: This operation was aborted","timestamp":"2026-07-22 16:11:56"}
+{"level":"info","message":"Servidor levantado en 0.0.0.0:3000 (entorno: production)","timestamp":"2026-07-22 19:02:40"}
+{"error":{"code":"ENOTFOUND","errno":-3008,"fatal":true,"hostname":"U-DBCO-01.edf.org","syscall":"getaddrinfo"},"level":"error","message":"Error crítico al conectar a la base de datos MariaDB: getaddrinfo ENOTFOUND U-DBCO-01.edf.org","timestamp":"2026-07-22 19:02:40"}
